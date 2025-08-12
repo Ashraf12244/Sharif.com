@@ -6,7 +6,84 @@
   <title>Sharif.com - Online Store</title>
   <style>
     /* Reset and base */
-    * {
+    * {<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sharif.com</title>
+<style>
+  body {font-family: Arial, sans-serif; margin:0; padding:0;}
+  /* پاپ اپ کا بیک گراؤنڈ */
+  #signupModal {
+    display: block; /* شروع میں دکھائیں */
+    position: fixed;
+    z-index: 9999;
+    left: 0; top: 0; width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.6);
+  }
+  /* فارم کا ڈبہ */
+  #signupModal .modal-content {
+    background: white;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 400px;
+    box-shadow: 0 0 10px #000;
+  }
+  #signupModal input, #signupModal textarea, #signupModal button {
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    font-size: 16px;
+  }
+  #signupModal button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  #signupModal button:hover {
+    background-color: #0056b3;
+  }
+</style>
+</head>
+<body>
+
+<!-- Modal -->
+<div id="signupModal">
+  <div class="modal-content">
+    <h2>Sign Up to Sharif.com</h2>
+    <form id="signupForm">
+      <input type="text" name="user_name" placeholder="Full Name" required />
+      <input type="email" name="user_email" placeholder="Email Address" required />
+      <input type="tel" name="user_phone" placeholder="Phone Number" required />
+      <textarea name="user_address" placeholder="Full Address" required></textarea>
+      <button type="submit">Sign Up</button>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js"></script>
+<script>
+  emailjs.init('ZXnUSSn-SeH0gTwhK'); // آپ کی Public Key
+
+  document.getElementById('signupForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    emailjs.sendForm('service_58s4btp', '__ejs-test-mail-service__', this)
+      .then(function() {
+        alert('Thank you for signing up!');
+        document.getElementById('signupForm').reset();
+        document.getElementById('signupModal').style.display = 'none'; // modal بند کریں
+      }, function(error) {
+        alert('Oops! Something went wrong.');
+        console.error(error);
+      });
+  });
+</script>
+
+</body>
+</html>
       box-sizing: border-box;
       margin: 0; padding: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -115,7 +192,19 @@
     }
   </style>
 </head>
-<body>
+<body><div class="products-container">
+  <div class="product-item">
+    <img src="product1.jpg" alt="Product 1" />
+    <h3>Product 1</h3>
+    <p>₹1000</p>
+  </div>
+  <div class="product-item">
+    <img src="product2.jpg" alt="Product 2" />
+    <h3>Product 2</h3>
+    <p>₹1500</p>
+  </div>
+  <!-- اور پروڈکٹس یہاں -->
+</div>
 
 <header>
   <a href="#" class="logo" title="Sharif.com Home">
