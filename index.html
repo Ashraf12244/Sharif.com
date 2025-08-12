@@ -27,7 +27,7 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
     /* Logo part */
-    .logo {
+     {
       display: flex;
       align-items: center;
       cursor: pointer;
@@ -445,3 +445,24 @@
 
 </body>
 </html>
+
+div.innerHTML = `
+  <img src="${p.image}" alt="${p.title}">
+  <div class="product-details">
+    <div class="product-title">${p.title}</div>
+    <div style="font-style:italic; color:#555; margin:5px 0;">
+      Brand: ${p.brand} | Model: ${p.model} | Quality: ${p.quality}
+    </div>
+    <div class="product-price">₹${p.price}</div>
+    <div style="margin-top:5px;">${p.description}</div>
+    <ul style="margin-top: 5px; color:#444;">
+      ${p.features.map(f => `<li>${f}</li>`).join('')}
+    </ul>
+    <div class="qty-controls">
+      <button class="btn secondary" onclick="decrease(${p.id})">−</button>
+      <div class="qty-display" id="qty-${p.id}">0</div>
+      <button class="btn" onclick="increase(${p.id})">+</button>
+      <button class="btn secondary" style="margin-left:10px;" onclick="addToCart(${p.id})">Add to Cart</button>
+    </div>
+  </div>
+`;
