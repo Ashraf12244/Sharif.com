@@ -1,210 +1,447 @@
-<!doctype html>
-<html lang="ur" dir="rtl">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>میری دکان — نمونہ</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sharif.com - Online Store</title>
   <style>
-    :root{--bg:#f6f7fb;--card:#fff;--accent:#c59a2a;--text:#111}
-    body{font-family: "Segoe UI", Tahoma, Arial; background:var(--bg); color:var(--text); margin:0; padding:20px}
-    .container{max-width:1100px;margin:0 auto}
-    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-    header h1{margin:0;font-size:20px}
-    .products{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
-    .card{background:var(--card);padding:12px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.06)}
-    .card img{width:100%;height:160px;object-fit:cover;border-radius:8px}
-    .title{font-weight:600;margin:8px 0}
-    .price{color:var(--accent);font-weight:700;margin-bottom:8px}
-    .btn{display:inline-block;padding:8px 12px;border-radius:8px;background:var(--accent);color:#fff;text-decoration:none;cursor:pointer;border:none}
-    .btn.secondary{background:#eee;color:#111}
-    .cart-btn{position:relative}
-    .cart-count{position:absolute;top:-8px;right:-8px;background:#e74c3c;color:#fff;border-radius:50%;width:20px;height:20px;font-size:12px;display:flex;align-items:center;justify-content:center}
-    .cart-panel{position:fixed;left:20px;bottom:20px;width:320px;background:var(--card);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);overflow:hidden;display:none}
-    .cart-header{display:flex;justify-content:space-between;padding:12px 14px;border-bottom:1px solid #eee}
-    .cart-items{max-height:320px;overflow:auto;padding:10px}
-    .cart-item{display:flex;gap:10px;align-items:center;padding:8px;border-bottom:1px solid #f2f2f2}
-    .cart-item img{width:56px;height:48px;object-fit:cover;border-radius:6px}
-    .qty{display:flex;gap:6px;align-items:center}
-    .total{padding:12px;border-top:1px solid #eee}
-    footer{margin-top:40px;text-align:center;color:#666;font-size:13px}
-    @media(max-width:600px){.cart-panel{width:90%;left:5%}}
+    /* Reset and base */
+    * {
+      box-sizing: border-box;
+      margin: 0; padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background: #f5f5f5;
+      color: #333;
+      padding: 20px;
+    }
+    /* Header */
+    header {
+      background: #232f3e; /* Amazon dark blue */
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    /* Logo part */
+    .logo {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      text-decoration: none;
+      color: white;
+    }
+    .logo img {
+      height: 40px;
+      margin-right: 12px;
+    }
+    .logo-text {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .logo-text span {
+      color: #febd69; /* Amazon orange */
+    }
+    /* Navigation (optional for now) */
+    nav {
+      display: flex;
+      gap: 20px;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      transition: color 0.3s ease;
+    }
+    nav a:hover {
+      color: #febd69;
+    }
+    /* Search bar */
+    .search-bar {
+      flex: 1;
+      margin: 0 30px;
+      position: relative;
+    }
+    .search-bar input {
+      width: 100%;
+      padding: 10px 50px 10px 15px;
+      border-radius: 4px;
+      border: none;
+      font-size: 16px;
+    }
+    .search-bar button {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      background: #febd69;
+      border: none;
+      padding: 0 15px;
+      cursor: pointer;
+      border-radius: 0 4px 4px 0;
+      font-weight: bold;
+      font-size: 16px;
+      color: #232f3e;
+      transition: background 0.3s ease;
+    }
+    .search-bar button:hover {
+      background: #f7a800;
+    }
+    /* Cart icon */
+    .cart {
+      position: relative;
+      cursor: pointer;
+    }
+    .cart img {
+      height: 30px;
+      filter: invert(100%);
+    }
+    .cart-count {
+      position: absolute;
+      top: -5px;
+      right: -10px;
+      background: #febd69;
+      color: #232f3e;
+      font-weight: 700;
+      border-radius: 50%;
+      padding: 2px 7px;
+      font-size: 14px;
+      user-select: none;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>میری دکان — نمونہ</h1>
-      <div>
-        <button class="btn cart-btn" id="openCart">
-          کارٹ دیکھیں
-          <span class="cart-count" id="cartCount" style="display:none">0</span>
-        </button>
-      </div>
-    </header>
 
-    <section>
-      <div class="products" id="products"></div>
-    </section>
+<header>
+  <a href="#" class="logo" title="Sharif.com Home">
+    <img src="https://svgshare.com/i/u3S.svg" alt="Sharif.com Logo" />
+    <div class="logo-text">Sharif<span>.com</span></div>
+  </a>
 
-    <!-- Cart Panel -->
-    <div class="cart-panel" id="cartPanel">
-      <div class="cart-header">
-        <strong>تمھارا کارٹ</strong>
-        <div>
-          <button class="btn secondary" id="clearCart">خالی کریں</button>
-          <button class="btn" id="closeCart" style="margin-left:8px">بند</button>
-        </div>
-      </div>
-      <div class="cart-items" id="cartItems"></div>
-      <div class="total">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <div><strong>کل رقم:</strong></div>
-          <div><strong id="cartTotal">₹0</strong></div>
-        </div>
-        <div style="display:flex;gap:8px">
-          <button class="btn" id="checkoutWhats">WhatsApp پر آرڈر</button>
-          <button class="btn secondary" id="checkoutEmail">ای میل سے آرڈر</button>
-        </div>
-      </div>
-    </div>
-
-    <footer>
-      نوٹ: یہ ایک نمونہ فری سٹور ہے۔ پیمنٹس یا شپنگ کا حقیقی انٹیگریشن الگ ہوگا۔
-    </footer>
+  <div class="search-bar">
+    <input type="text" placeholder="Search products..." />
+    <button>Search</button>
   </div>
 
-  <script>
-    const PRODUCTS = [
-      {id:1, title:"مصنوع ۱", price:499, image:"https://picsum.photos/seed/p1/600/400", desc:"مختصر تفصیل ۱"},
-      {id:2, title:"مصنوع ۲", price:799, image:"https://picsum.photos/seed/p2/600/400", desc:"مختصر تفصیل ۲"},
-      {id:3, title:"مصنوع ۳", price:299, image:"https://picsum.photos/seed/p3/600/400", desc:"مختصر تفصیل ۳"},
-      {id:4, title:"مصنوع ۴", price:1299, image:"https://picsum.photos/seed/p4/600/400", desc:"مختصر تفصیل ۴"}
-    ];
+  <div class="cart" title="View Cart">
+    <img src="https://svgshare.com/i/u3R.svg" alt="Cart Icon" />
+    <div class="cart-count" id="cartCount">0</div>
+  </div>
+</header>
 
-    let cart = JSON.parse(localStorage.getItem('myshop_cart') || '[]');
+<!-- Your content starts here -->
 
-    const productsDiv = document.getElementById('products');
-    const cartCount = document.getElementById('cartCount');
-    const cartPanel = document.getElementById('cartPanel');
-    const cartItemsDiv = document.getElementById('cartItems');
-    const cartTotalEl = document.getElementById('cartTotal');
+</body>
+</html> 
 
-    function renderProducts(){
-      productsDiv.innerHTML = '';
-      PRODUCTS.forEach(p=>{
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <img src="${p.image}" alt="${p.title}">
-          <div class="title">${p.title}</div>
-          <div class="price">₹${p.price}</div>
-          <div style="margin-bottom:8px;color:#555">${p.desc}</div>
-          <div style="display:flex;gap:8px">
-            <button class="btn" onclick="addToCart(${p.id})">Add to Cart</button>
-            <button class="btn secondary" onclick="showQuick(${p.id})">تفصیل</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sharif.com - Simple E-commerce</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .product { display: flex; border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
+    .product img { width: 100px; height: 100px; object-fit: cover; }
+    .product-details { flex: 1; margin-left: 15px; }
+    .product-title { font-weight: 600; font-size: 18px; }
+    .product-price { color: #666; margin-top: 5px; }
+    .qty-controls { margin-top: 10px; display: flex; align-items: center; }
+    .qty-controls button { padding: 5px 10px; margin: 0 5px; cursor: pointer; }
+    .qty-display { min-width: 28px; text-align: center; }
+    #cartPanel { display: none; position: fixed; top: 10px; right: 10px; width: 350px; max-height: 90vh; overflow-y: auto; background: #f9f9f9; border: 1px solid #ccc; padding: 15px; box-shadow: 0 0 8px rgba(0,0,0,0.2); z-index: 1000; }
+    #cartPanel h2 { margin-top: 0; }
+    .cart-item { display: flex; margin-bottom: 10px; }
+    .cart-item img { width: 60px; height: 60px; object-fit: cover; }
+    .cart-item-details { flex: 1; margin-left: 10px; }
+    .cart-item-title { font-weight: 600; }
+    .cart-item-price { color: #666; margin-top: 3px; }
+    .cart-item-qty { margin-top: 5px; display: flex; align-items: center; }
+    .cart-item-qty button { padding: 3px 7px; margin: 0 3px; cursor: pointer; }
+    .cart-total { font-weight: 700; margin-top: 15px; font-size: 18px; }
+    .btn { background: #007bff; border: none; color: white; padding: 7px 12px; cursor: pointer; }
+    .btn.secondary { background: #6c757d; }
+    .btn.disabled { background: #ccc; cursor: not-allowed; }
+    .checkout-options { margin-top: 20px; }
+    .checkout-options button { margin-right: 10px; }
+    #openCart { position: fixed; top: 10px; right: 10px; background: #28a745; color: white; border: none; padding: 10px 15px; cursor: pointer; z-index: 1001; }
+    #closeCart { float: right; cursor: pointer; font-size: 20px; font-weight: bold; color: #888; }
+  </style>
+</head>
+<body>
+
+<h1>Welcome to Sharif.com</h1>
+<div id="productList"></div>
+
+<button id="openCart">Open Cart 🛒</button>
+
+<div id="cartPanel">
+  <div><span id="closeCart">&times;</span></div>
+  <h2>Your Cart</h2>
+  <div id="cartItems"></div>
+  <div class="cart-total" id="cartTotal">Total: ₹0</div>
+  <div class="checkout-options">
+    <label>
+      <input type="radio" name="paymentMethod" value="cod" checked /> Cash on Delivery
+    </label>
+    <label style="margin-left: 15px;">
+      <input type="radio" name="paymentMethod" value="whatsapp" /> WhatsApp
+    </label>
+    <label style="margin-left: 15px;">
+      <input type="radio" name="paymentMethod" value="email" /> Email
+    </label>
+  </div>
+  <button id="checkoutBtn" class="btn" style="margin-top: 15px;">Checkout</button>
+  <button id="clearCart" class="btn secondary" style="margin-top: 10px;">Clear Cart</button>
+</div>
+
+<script>
+  // Sample products array
+  const PRODUCTS = [
+    { id: 1, title: "Premium Leather Wallet", description: "High quality leather wallet, durable and stylish.", price: 1200, image: "https://via.placeholder.com/100?text=Wallet" },
+    { id: 2, title: "Cotton Casual Shirt", description: "Comfortable cotton shirt, perfect for daily wear.", price: 850, image: "https://via.placeholder.com/100?text=Shirt" },
+    { id: 3, title: "Sports Running Shoes", description: "Lightweight running shoes with great cushioning.", price: 3000, image: "https://via.placeholder.com/100?text=Shoes" }
+  ];
+
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+  const productList = document.getElementById('productList');
+  const cartPanel = document.getElementById('cartPanel');
+  const cartItemsDiv = document.getElementById('cartItems');
+  const cartTotalEl = document.getElementById('cartTotal');
+  const openCartBtn = document.getElementById('openCart');
+  const closeCartBtn = document.getElementById('closeCart');
+  const clearCartBtn = document.getElementById('clearCart');
+  const checkoutBtn = document.getElementById('checkoutBtn');
+
+  // Render products on page
+  function renderProducts() {
+    productList.innerHTML = '';
+    PRODUCTS.forEach(p => {
+      const div = document.createElement('div');
+      div.className = 'product';
+      div.innerHTML = `
+        <img src="${p.image}" alt="${p.title}">
+        <div class="product-details">
+          <div class="product-title">${p.title}</div>
+          <div class="product-price">₹${p.price}</div>
+          <div style="margin-top:5px;">${p.description}</div>
+          <div class="qty-controls">
+            <button class="btn secondary" onclick="decrease(${p.id})">−</button>
+            <div class="qty-display" id="qty-${p.id}">0</div>
+            <button class="btn" onclick="increase(${p.id})">+</button>
+            <button class="btn secondary" style="margin-left:10px;" onclick="addToCart(${p.id})">Add to Cart</button>
           </div>
-        `;
-        productsDiv.appendChild(card);
-      });
+        </div>
+      `;
+      productList.appendChild(div);
+      updateQtyDisplay(p.id);
+    });
+  }
+
+  // Update quantity display for a product
+  function updateQtyDisplay(id) {
+    const qtyDisplay = document.getElementById(`qty-${id}`);
+    const item = cart.find(x => x.id === id);
+    qtyDisplay.innerText = item ? item.qty : 0;
+  }
+
+  // Save cart to localStorage and update UI
+  function saveCart() {
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartUI();
+  }
+
+  // Add product to cart or increase qty
+  function addToCart(id) {
+    const item = cart.find(x => x.id === id);
+    if (item) {
+      item.qty++;
+    } else {
+      cart.push({ id: id, qty: 1 });
     }
+    saveCart();
+  }
 
-    function showQuick(id){
-      const p = PRODUCTS.find(x=>x.id===id);
-      alert(p.title + "\\n\\n" + p.desc + "\\n\\nقیمت: ₹" + p.price);
-    }
-
-    function saveCart(){ localStorage.setItem('myshop_cart', JSON.stringify(cart)); updateCartUI(); }
-
-    function addToCart(id){
-      const item = cart.find(x=>x.id===id);
-      if(item) item.qty++;
-      else cart.push({id, qty:1});
+  function increase(id) {
+    const item = cart.find(x => x.id === id);
+    if (item) {
+      item.qty++;
       saveCart();
     }
+  }
 
-    function updateCartUI(){
-      const totalCount = cart.reduce((s,i)=>s+i.qty,0);
-      if(totalCount>0){ cartCount.style.display='flex'; cartCount.innerText = totalCount; }
-      else cartCount.style.display='none';
+  function decrease(id) {
+    const item = cart.find(x => x.id === id);
+    if (item) {
+      item.qty--;
+      if (item.qty <= 0) {
+        cart = cart.filter(x => x.id !== id);
+      }
+      saveCart();
+    }
+  }
 
-      cartItemsDiv.innerHTML = '';
-      let totalPrice = 0;
-      cart.forEach(ci=>{
-        const p = PRODUCTS.find(x=>x.id===ci.id);
-        const line = document.createElement('div');
-        line.className = 'cart-item';
-        const lineHtml = `
-          <img src="${p.image}" alt="">
-          <div style="flex:1">
-            <div style="font-weight:600">${p.title}</div>
-            <div style="color:#666">₹${p.price} x ${ci.qty} = ₹${p.price*ci.qty}</div>
-            <div class="qty" style="margin-top:6px">
-              <button class="btn secondary" onclick="decrease(${p.id})">−</button>
-              <div style="min-width:28px;text-align:center">${ci.qty}</div>
-              <button class="btn" onclick="increase(${p.id})">+</button>
-              <button class="btn secondary" style="margin-left:8px" onclick="removeItem(${p.id})">ہٹائیں</button>
-            </div>
+  function removeItem(id) {
+    cart = cart.filter(x => x.id !== id);
+    saveCart();
+  }
+
+  function clearCart() {
+    if (confirm('Are you sure you want to clear the cart?')) {
+      cart = [];
+      saveCart();
+    }
+  }
+
+  // Update cart panel UI
+  function updateCartUI() {
+    cartItemsDiv.innerHTML = '';
+    let totalPrice = 0;
+    cart.forEach(ci => {
+      const p = PRODUCTS.find(x => x.id === ci.id);
+      if (!p) return;
+
+      const div = document.createElement('div');
+      div.className = 'cart-item';
+      div.innerHTML = `
+        <img src="${p.image}" alt="${p.title}">
+        <div class="cart-item-details">
+          <div class="cart-item-title">${p.title}</div>
+          <div class="cart-item-price">₹${p.price} × ${ci.qty} = ₹${p.price * ci.qty}</div>
+          <div class="cart-item-qty">
+            <button class="btn secondary" onclick="decrease(${p.id})">−</button>
+            <div class="qty-display">${ci.qty}</div>
+            <button class="btn" onclick="increase(${p.id})">+</button>
+            <button class="btn secondary" style="margin-left: 8px;" onclick="removeItem(${p.id})">Remove</button>
           </div>
-        `;
-        line.innerHTML = lineHtml;
-        cartItemsDiv.appendChild(line);
-        totalPrice += p.price * ci.qty;
-      });
-      cartTotalEl.innerText = '₹' + totalPrice;
+        </div>
+      `;
+      cartItemsDiv.appendChild(div);
+      totalPrice += p.price * ci.qty;
+      updateQtyDisplay(p.id);
+    });
+    cartTotalEl.innerText = 'Total: ₹' + totalPrice;
+  }
+
+  // Checkout functions
+
+  function checkout() {
+    if (cart.length === 0) {
+      alert('Your cart is empty.');
+      return;
     }
 
-    function increase(id){ const it = cart.find(x=>x.id===id); if(it){ it.qty++; saveCart(); } }
-    function decrease(id){ const it = cart.find(x=>x.id===id); if(it){ it.qty--; if(it.qty<=0) cart = cart.filter(x=>x.id!==id); saveCart(); } }
-    function removeItem(id){ cart = cart.filter(x=>x.id!==id); saveCart(); }
-    function clearCart(){ if(confirm('کارٹ خالی کریں؟')){ cart=[]; saveCart(); } }
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
 
-    function checkoutWhatsApp(){
-      if(cart.length===0){ alert('آپ کا کارٹ خالی ہے'); return; }
-      const phone = prompt('اپنا WhatsApp نمبر درج کریں (مثال: 91XXXXXXXXXX) — یا بیچنے والے کا نمبر دیں');
-      if(!phone) return;
-      let message = 'نیا آرڈر:%0A';
-      let total=0;
-      cart.forEach(ci=>{
-        const p = PRODUCTS.find(x=>x.id===ci.id);
-        message += `${p.title} - ${ci.qty} x ₹${p.price} = ₹${p.price*ci.qty}%0A`;
-        total += p.price*ci.qty;
-      });
-      message += `%0Aکل رقم: ₹${total}%0A`;
-      message += 'نام: %0Aفون: %0Aایڈریس: %0A';
-      const url = `https://wa.me/${phone}?text=${message}`;
-      window.open(url,'_blank');
+    if (paymentMethod === 'cod') {
+      checkoutCOD();
+    } else if (paymentMethod === 'whatsapp') {
+      checkoutWhatsApp();
+    } else if (paymentMethod === 'email') {
+      checkoutEmail();
     }
+  }
 
-    function checkoutEmail(){
-      if(cart.length===0){ alert('آپ کا کارٹ خالی ہے'); return; }
-      const to = prompt('آرڈر وصول کرنے والی ای میل لکھیں (مثال: seller@example.com)');
-      if(!to) return;
-      let body = 'نیا آرڈر:\n\n';
-      let total=0;
-      cart.forEach(ci=>{
-        const p = PRODUCTS.find(x=>x.id===ci.id);
-        body += `${p.title} - ${ci.qty} x ${p.price} = ${p.price*ci.qty}\n`;
-        total += p.price*ci.qty;
-      });
-      body += `\nکل رقم: ₹${total}\n\nنام:\nفون:\nایڈریس:\n`;
-      const mailto = `mailto:${to}?subject=${encodeURIComponent('نیا آرڈر')}&body=${encodeURIComponent(body)}`;
-      window.location.href = mailto;
-    }
+  // Cash on Delivery Checkout
+  function checkoutCOD() {
+    const name = prompt('Enter your full name:');
+    if (!name) return alert('Name is required.');
 
-    document.getElementById('openCart').addEventListener('click', ()=>{ cartPanel.style.display='block'; updateCartUI(); });
-    document.getElementById('closeCart').addEventListener('click', ()=>{ cartPanel.style.display='none'; });
-    document.getElementById('clearCart').addEventListener('click', clearCart);
-    document.getElementById('checkoutWhats').addEventListener('click', checkoutWhatsApp);
-    document.getElementById('checkoutEmail').addEventListener('click', checkoutEmail);
+    const phone = prompt('Enter your phone number (e.g. 91XXXXXXXXXX):');
+    if (!phone) return alert('Phone number is required.');
 
-    window.addToCart = addToCart;
-    window.showQuick = showQuick;
-    window.increase = increase;
-    window.decrease = decrease;
-    window.removeItem = removeItem;
+    const address = prompt('Enter your delivery address:');
+    if (!address) return alert('Address is required.');
 
-    renderProducts();
+    let message = `New Order from Sharif.com\n\nCustomer Details:\nName: ${name}\nPhone: ${phone}\nAddress: ${address}\n\nOrder Details:\n`;
+    let total = 0;
+
+    cart.forEach(ci => {
+      const p = PRODUCTS.find(x => x.id === ci.id);
+      message += `${p.title} - ${ci.qty} × ₹${p.price} = ₹${p.price * ci.qty}\n`;
+      total += p.price * ci.qty;
+    });
+
+    message += `\nTotal Amount: ₹${total}\nPayment Method: Cash on Delivery\n\nThank you for shopping with us!`;
+
+    // For demo, just alert message. In real case, send to server or admin email
+    alert('Order Placed!\n\n' + message);
+
+    // Clear cart after order
+    cart = [];
+    saveCart();
+    cartPanel.style.display = 'none';
+  }
+
+  // WhatsApp Checkout
+  function checkoutWhatsApp() {
+    const phone = prompt('Enter WhatsApp number to send order (e.g. 91XXXXXXXXXX):');
+    if (!phone) return;
+
+    let message = 'New Order from Sharif.com:%0A%0ACustomer Details:%0AName:%0APhone:%0AAddress:%0A%0AOrder Details:%0A';
+    let total = 0;
+
+    cart.forEach(ci => {
+      const p = PRODUCTS.find(x => x.id === ci.id);
+      message += `${p.title} - ${ci.qty} × ₹${p.price} = ₹${p.price * ci.qty}%0A`;
+      total += p.price * ci.qty;
+    });
+
+    message += `%0ATotal Amount: ₹${total}%0APayment Method: WhatsApp Order%0A%0AThank you for shopping with us!`;
+
+    const url = `https://wa.me/${phone}?text=${message}`;
+    window.open(url, '_blank');
+  }
+
+  // Email Checkout
+  function checkoutEmail() {
+    const to = prompt('Enter the email address to send order to (e.g. seller@example.com):');
+    if (!to) return;
+
+    let body = 'New Order from Sharif.com\n\nCustomer Details:\nName:\nPhone:\nAddress:\n\nOrder Details:\n';
+    let total = 0;
+
+    cart.forEach(ci => {
+      const p = PRODUCTS.find(x => x.id === ci.id);
+      body += `${p.title} - ${ci.qty} × ₹${p.price} = ₹${p.price * ci.qty}\n`;
+      total += p.price * ci.qty;
+    });
+
+    body += `\nTotal Amount: ₹${total}\nPayment Method: Email Order\n\nThank you for shopping with us!`;
+
+    const mailto = `mailto:${to}?subject=${encodeURIComponent('New Order from Sharif.com')}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailto;
+  }
+
+  // Event listeners
+  openCartBtn.addEventListener('click', () => {
+    cartPanel.style.display = 'block';
     updateCartUI();
-  </script>
+  });
+
+  closeCartBtn.addEventListener('click', () => {
+    cartPanel.style.display = 'none';
+  });
+
+  clearCartBtn.addEventListener('click', clearCart);
+  checkoutBtn.addEventListener('click', checkout);
+
+  // Expose functions globally for inline onclick
+  window.increase = increase;
+  window.decrease = decrease;
+  window.removeItem = removeItem;
+  window.addToCart = addToCart;
+
+  renderProducts();
+  updateCartUI();
+</script>
+
 </body>
 </html>
