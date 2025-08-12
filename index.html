@@ -1,56 +1,256 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sharif.com - Online Store</title>
-  <style>
-    /* Reset and base */
-    * {<!DOCTYPE html>
-<html lang="en">
-<head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Sharif.com</title>
+<title>Sharif.com - Your Trusted Ecommerce</title>
 <style>
-  body {font-family: Arial, sans-serif; margin:0; padding:0;}
-  /* پاپ اپ کا بیک گراؤنڈ */
-  #signupModal {
-    display: block; /* شروع میں دکھائیں */
-    position: fixed;
-    z-index: 9999;
-    left: 0; top: 0; width: 100%; height: 100%;
-    background-color: rgba(0,0,0,0.6);
+  /* Reset and base */
+  * {
+    box-sizing: border-box;
   }
-  /* فارم کا ڈبہ */
-  #signupModal .modal-content {
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0;
+    background: #f5f5f5;
+    color: #333;
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  /* Header */
+  header {
+    background: #007bff;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 24px;
+  }
+  #openCart {
+    cursor: pointer;
     background: white;
-    margin: 10% auto;
-    padding: 20px;
-    border-radius: 8px;
-    max-width: 400px;
-    box-shadow: 0 0 10px #000;
+    color: #007bff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-weight: bold;
   }
-  #signupModal input, #signupModal textarea, #signupModal button {
-    width: 100%;
-    margin: 10px 0;
-    padding: 10px;
+
+  /* Products Grid */
+  .products-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 20px;
+  }
+  .product-item {
+    background: white;
+    border-radius: 6px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+  }
+  .product-item img {
+    max-width: 100%;
+    height: 150px;
+    object-fit: contain;
+    margin-bottom: 10px;
+  }
+  .product-item h3 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    color: #007bff;
+  }
+  .product-item p {
+    margin: 5px 0;
+    font-weight: 600;
     font-size: 16px;
   }
-  #signupModal button {
-    background-color: #007bff;
+  .product-item button {
+    margin-top: 10px;
+    background: #007bff;
     color: white;
     border: none;
+    padding: 10px 0;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+  }
+  .product-item button:hover {
+    background: #0056b3;
+  }
+
+  /* Cart Panel */
+  #cartPanel {
+    position: fixed;
+    top: 0; right: 0;
+    width: 320px;
+    height: 100%;
+    background: white;
+    box-shadow: -3px 0 10px rgba(0,0,0,0.2);
+    padding: 20px;
+    overflow-y: auto;
+    display: none;
+    flex-direction: column;
+    z-index: 9999;
+  }
+  #cartPanel h2 {
+    margin-top: 0;
+  }
+  #closeCart {
+    cursor: pointer;
+    background: #ccc;
+    border: none;
+    padding: 5px 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+  }
+  .cart-item {
+    display: flex;
+    margin-bottom: 15px;
+    align-items: center;
+  }
+  .cart-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 10px;
+  }
+  .cart-item-details {
+    flex: 1;
+  }
+  .cart-item-details div {
+    margin-bottom: 4px;
+  }
+  .qty-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .qty-controls button {
+    padding: 4px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    border: 1px solid #007bff;
+    background: white;
+    color: #007bff;
+    font-weight: bold;
+  }
+  .qty-controls button.secondary {
+    background: #eee;
+    color: #333;
+    border-color: #ccc;
+  }
+  #clearCart {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: auto;
+  }
+  #clearCart:hover {
+    background: #a71d2a;
+  }
+  #cartTotal {
+    font-weight: bold;
+    font-size: 18px;
+    margin-top: 10px;
+  }
+
+  /* Signup Modal */
+  #signupModal {
+    display: flex; /* visible on load */
+    position: fixed;
+    z-index: 10000;
+    left: 0; top: 0; width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+  }
+  #signupModal .modal-content {
+    background: white;
+    max-width: 400px;
+    width: 90%;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.3);
+  }
+  #signupModal form input,
+  #signupModal form textarea {
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 10px;
+    font-size: 15px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  #signupModal form button {
+    width: 100%;
+    padding: 12px;
+    background: #007bff;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
   }
-  #signupModal button:hover {
-    background-color: #0056b3;
+  #signupModal form button:hover {
+    background: #0056b3;
+  }
+
+  /* Responsive */
+  @media (max-width: 992px) {
+    .products-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 600px) {
+    .products-container {
+      grid-template-columns: 1fr;
+    }
+    #cartPanel {
+      width: 100%;
+    }
   }
 </style>
 </head>
 <body>
 
-<!-- Modal -->
+<header>
+  <h1>Sharif.com</h1>
+  <button id="openCart">Cart 🛒</button>
+</header>
+
+<!-- Products Grid -->
+<div class="products-container" id="productsContainer">
+  <!-- Products will be rendered here by JS -->
+</div>
+
+<!-- Cart Panel -->
+<div id="cartPanel">
+  <button id="closeCart">Close X</button>
+  <h2>Your Cart</h2>
+  <div id="cartItemsDiv"></div>
+  <div id="cartTotal">₹0</div>
+  <button id="clearCart">Clear Cart</button>
+</div>
+
+<!-- Signup Modal -->
 <div id="signupModal">
   <div class="modal-content">
     <h2>Sign Up to Sharif.com</h2>
@@ -58,7 +258,7 @@
       <input type="text" name="user_name" placeholder="Full Name" required />
       <input type="email" name="user_email" placeholder="Email Address" required />
       <input type="tel" name="user_phone" placeholder="Phone Number" required />
-      <textarea name="user_address" placeholder="Full Address" required></textarea>
+      <textarea name="user_address" placeholder="Full Address (Street, City, Zip)" required></textarea>
       <button type="submit">Sign Up</button>
     </form>
   </div>
@@ -66,492 +266,568 @@
 
 <script src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js"></script>
 <script>
-  emailjs.init('ZXnUSSn-SeH0gTwhK'); // آپ کی Public Key
-
-  document.getElementById('signupForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    emailjs.sendForm('service_58s4btp', '__ejs-test-mail-service__', this)
-      .then(function() {
-        alert('Thank you for signing up!');
-        document.getElementById('signupForm').reset();
-        document.getElementById('signupModal').style.display = 'none'; // modal بند کریں
-      }, function(error) {
-        alert('Oops! Something went wrong.');
-        console.error(error);
-      });
-  });
-</script>
-
-</body>
-</html>
-      box-sizing: border-box;
-      margin: 0; padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    body {
-      background: #f5f5f5;
-      color: #333;
-      padding: 20px;
-    }
-    /* Header */
-    header {
-      background: #232f3e; /* Amazon dark blue */
-      color: white;
-      padding: 15px 30px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-    /* Logo part */
-     {
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-      text-decoration: none;
-      color: white;
-    }
-    .logo img {
-      height: 40px;
-      margin-right: 12px;
-    }
-    .logo-text {
-      font-size: 24px;
-      font-weight: 700;
-      letter-spacing: 1px;
-    }
-    .logo-text span {
-      color: #febd69; /* Amazon orange */
-    }
-    /* Navigation (optional for now) */
-    nav {
-      display: flex;
-      gap: 20px;
-    }
-    nav a {
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 16px;
-      transition: color 0.3s ease;
-    }
-    nav a:hover {
-      color: #febd69;
-    }
-    /* Search bar */
-    .search-bar {
-      flex: 1;
-      margin: 0 30px;
-      position: relative;
-    }
-    .search-bar input {
-      width: 100%;
-      padding: 10px 50px 10px 15px;
-      border-radius: 4px;
-      border: none;
-      font-size: 16px;
-    }
-    .search-bar button {
-      position: absolute;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      background: #febd69;
-      border: none;
-      padding: 0 15px;
-      cursor: pointer;
-      border-radius: 0 4px 4px 0;
-      font-weight: bold;
-      font-size: 16px;
-      color: #232f3e;
-      transition: background 0.3s ease;
-    }
-    .search-bar button:hover {
-      background: #f7a800;
-    }
-    /* Cart icon */
-    .cart {
-      position: relative;
-      cursor: pointer;
-    }
-    .cart img {
-      height: 30px;
-      filter: invert(100%);
-    }
-    .cart-count {
-      position: absolute;
-      top: -5px;
-      right: -10px;
-      background: #febd69;
-      color: #232f3e;
-      font-weight: 700;
-      border-radius: 50%;
-      padding: 2px 7px;
-      font-size: 14px;
-      user-select: none;
-    }
-  </style>
-</head>
-<body><div class="products-container">
-  <div class="product-item">
-    <img src="product1.jpg" alt="Product 1" />
-    <h3>Product 1</h3>
-    <p>₹1000</p>
-  </div>
-  <div class="product-item">
-    <img src="product2.jpg" alt="Product 2" />
-    <h3>Product 2</h3>
-    <p>₹1500</p>
-  </div>
-  <!-- اور پروڈکٹس یہاں -->
-</div>
-
-<header>
-  <a href="#" class="logo" title="Sharif.com Home">
-    <img src="https://svgshare.com/i/u3S.svg" alt="Sharif.com Logo" />
-    <div class="logo-text">Sharif<span>.com</span></div>
-  </a>
-
-  <div class="search-bar">
-    <input type="text" placeholder="Search products..." />
-    <button>Search</button>
-  </div>
-
-  <div class="cart" title="View Cart">
-    <img src="https://svgshare.com/i/u3R.svg" alt="Cart Icon" />
-    <div class="cart-count" id="cartCount">0</div>
-  </div>
-</header>
-
-<!-- Your content starts here -->
-
-</body>
-</html> 
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sharif.com - Simple E-commerce</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    .product { display: flex; border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
-    .product img { width: 100px; height: 100px; object-fit: cover; }
-    .product-details { flex: 1; margin-left: 15px; }
-    .product-title { font-weight: 600; font-size: 18px; }
-    .product-price { color: #666; margin-top: 5px; }
-    .qty-controls { margin-top: 10px; display: flex; align-items: center; }
-    .qty-controls button { padding: 5px 10px; margin: 0 5px; cursor: pointer; }
-    .qty-display { min-width: 28px; text-align: center; }
-    #cartPanel { display: none; position: fixed; top: 10px; right: 10px; width: 350px; max-height: 90vh; overflow-y: auto; background: #f9f9f9; border: 1px solid #ccc; padding: 15px; box-shadow: 0 0 8px rgba(0,0,0,0.2); z-index: 1000; }
-    #cartPanel h2 { margin-top: 0; }
-    .cart-item { display: flex; margin-bottom: 10px; }
-    .cart-item img { width: 60px; height: 60px; object-fit: cover; }
-    .cart-item-details { flex: 1; margin-left: 10px; }
-    .cart-item-title { font-weight: 600; }
-    .cart-item-price { color: #666; margin-top: 3px; }
-    .cart-item-qty { margin-top: 5px; display: flex; align-items: center; }
-    .cart-item-qty button { padding: 3px 7px; margin: 0 3px; cursor: pointer; }
-    .cart-total { font-weight: 700; margin-top: 15px; font-size: 18px; }
-    .btn { background: #007bff; border: none; color: white; padding: 7px 12px; cursor: pointer; }
-    .btn.secondary { background: #6c757d; }
-    .btn.disabled { background: #ccc; cursor: not-allowed; }
-    .checkout-options { margin-top: 20px; }
-    .checkout-options button { margin-right: 10px; }
-    #openCart { position: fixed; top: 10px; right: 10px; background: #28a745; color: white; border: none; padding: 10px 15px; cursor: pointer; z-index: 1001; }
-    #closeCart { float: right; cursor: pointer; font-size: 20px; font-weight: bold; color: #888; }
-  </style>
-</head>
-<body>
-
-<h1>Welcome to Sharif.com</h1>
-<div id="productList"></div>
-
-<button id="openCart">Open Cart 🛒</button>
-
-<div id="cartPanel">
-  <div><span id="closeCart">&times;</span></div>
-  <h2>Your Cart</h2>
-  <div id="cartItems"></div>
-  <div class="cart-total" id="cartTotal">Total: ₹0</div>
-  <div class="checkout-options">
-    <label>
-      <input type="radio" name="paymentMethod" value="cod" checked /> Cash on Delivery
-    </label>
-    <label style="margin-left: 15px;">
-      <input type="radio" name="paymentMethod" value="whatsapp" /> WhatsApp
-    </label>
-    <label style="margin-left: 15px;">
-      <input type="radio" name="paymentMethod" value="email" /> Email
-    </label>
-  </div>
-  <button id="checkoutBtn" class="btn" style="margin-top: 15px;">Checkout</button>
-  <button id="clearCart" class="btn secondary" style="margin-top: 10px;">Clear Cart</button>
-</div>
-
-<script>
-  // Sample products array
+  // Sample products data
   const PRODUCTS = [
-    { id: 1, title: "Premium Leather Wallet", description: "High quality leather wallet, durable and stylish.", price: 1200, image: "https://via.placeholder.com/100?text=Wallet" },
-    { id: 2, title: "Cotton Casual Shirt", description: "Comfortable cotton shirt, perfect for daily wear.", price: 850, image: "https://via.placeholder.com/100?text=Shirt" },
-    { id: 3, title: "Sports Running Shoes", description: "Lightweight running shoes with great cushioning.", price: 3000, image: "https://via.placeholder.com/100?text=Shoes" }
+    {id: 1, title: "Microphone X100", price: 2500, image: "https://via.placeholder.com/150?text=Mic+X100"},
+    {id: 2, title: "Wireless Headphones", price: 3500, image: "https://via.placeholder.com/150?text=Headphones"},
+    {id: 3, title: "USB-C Cable", price: 300, image: "https://via.placeholder.com/150?text=USB-C+Cable"},
+    {id: 4, title: "Bluetooth Speaker", price: 2200, image: "https://via.placeholder.com/150?text=Speaker"},
+    {id: 5, title: "Laptop Stand", price: 1800, image: "https://via.placeholder.com/150?text=Laptop+Stand"},
+    {id: 6, title: "Gaming Mouse", price: 1500, image: "https://via.placeholder.com/150?text=Gaming+Mouse"},
+    {id: 7, title: "Webcam HD", price: 2800, image: "https://via.placeholder.com/150?text=Webcam+HD"},
+    {id: 8, title: "Power Bank 10000mAh", price: 2000, image: "https://via.placeholder.com/150?text=Power+Bank"}
   ];
 
-  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  let cart = [];
 
-  const productList = document.getElementById('productList');
-  const cartPanel = document.getElementById('cartPanel');
-  const cartItemsDiv = document.getElementById('cartItems');
-  const cartTotalEl = document.getElementById('cartTotal');
-  const openCartBtn = document.getElementById('openCart');
-  const closeCartBtn = document.getElementById('closeCart');
-  const clearCartBtn = document.getElementById('clearCart');
-  const checkoutBtn = document.getElementById('checkoutBtn');
-
-  // Render products on page
+  // Render products grid
   function renderProducts() {
-    productList.innerHTML = '';
+    const container = document.getElementById('productsContainer');
+    container.innerHTML = '';
     PRODUCTS.forEach(p => {
       const div = document.createElement('div');
-      div.className = 'product';
+      div.className = 'product-item';
       div.innerHTML = `
-        <img src="${p.image}" alt="${p.title}">
-        <div class="product-details">
-          <div class="product-title">${p.title}</div>
-          <div class="product-price">₹${p.price}</div>
-          <div style="margin-top:5px;">${p.description}</div>
-          <div class="qty-controls">
-            <button class="btn secondary" onclick="decrease(${p.id})">−</button>
-            <div class="qty-display" id="qty-${p.id}">0</div>
-            <button class="btn" onclick="increase(${p.id})">+</button>
-            <button class="btn secondary" style="margin-left:10px;" onclick="addToCart(${p.id})">Add to Cart</button>
-          </div>
-        </div>
+        <img src="${p.image}" alt="${p.title}" />
+        <h3>${p.title}</h3>
+        <p>₹${p.price}</p>
+        <button onclick="addToCart(${p.id})">Add to Cart</button>
       `;
-      productList.appendChild(div);
-      updateQtyDisplay(p.id);
+      container.appendChild(div);
     });
   }
 
-  // Update quantity display for a product
-  function updateQtyDisplay(id) {
-    const qtyDisplay = document.getElementById(`qty-${id}`);
-    const item = cart.find(x => x.id === id);
-    qtyDisplay.innerText = item ? item.qty : 0;
-  }
-
-  // Save cart to localStorage and update UI
-  function saveCart() {
-    localStorage.setItem('cart', JSON.stringify(cart));
+  // Add to cart
+  function addToCart(id) {
+    const product = PRODUCTS.find(p => p.id === id);
+    if(!product) return;
+    const cartItem = cart.find(c => c.id === id);
+    if(cartItem) {
+      cartItem.qty++;
+    } else {
+      cart.push({id: id, qty: 1});
+    }
     updateCartUI();
   }
 
-  // Add product to cart or increase qty
-  function addToCart(id) {
-    const item = cart.find(x => x.id === id);
-    if (item) {
-      item.qty++;
-    } else {
-      cart.push({ id: id, qty: 1 });
-    }
-    saveCart();
+  // Update cart UI
+  function updateCartUI() {
+    const cartItemsDiv = document.getElementById('cartItemsDiv');
+    cartItemsDiv.innerHTML = '';
+    let totalPrice = 0;
+    cart.forEach(ci => {
+      const p = PRODUCTS.find(prod => prod.id === ci.id);
+      if(!p) return;
+      const line = document.createElement('div');
+      line.className = 'cart-item';
+      line.innerHTML = `
+        <img src="${p.image}" alt="${p.title}" />
+        <div class="cart-item-details">
+          <div><strong>${p.title}</strong></div>
+          <div>₹${p.price} x ${ci.qty} = ₹${p.price * ci.qty}</div>
+          <div class="qty-controls">
+            <button class="secondary" onclick="decrease(${p.id})">−</button>
+            <div>${ci.qty}</div>
+            <button onclick="increase(${p.id})">+</button>
+            <button class="secondary" onclick="removeItem(${p.id})" style="margin-left:8px;">Remove</button>
+          </div>
+        </div>
+      `;
+      cartItemsDiv.appendChild(line);
+      totalPrice += p.price * ci.qty;
+    });
+    document.getElementById('cartTotal').innerText = '₹' + totalPrice;
   }
 
   function increase(id) {
-    const item = cart.find(x => x.id === id);
-    if (item) {
+    const item = cart.find(c => c.id === id);
+    if(item) {
       item.qty++;
-      saveCart();
+      updateCartUI();
     }
   }
 
   function decrease(id) {
-    const item = cart.find(x => x.id === id);
-    if (item) {
+    const item = cart.find(c => c.id === id);
+    if(item) {
       item.qty--;
-      if (item.qty <= 0) {
-        cart = cart.filter(x => x.id !== id);
+      if(item.qty <= 0) {
+        cart = cart.filter(c => c.id !== id);
       }
-      saveCart();
+      updateCartUI();
     }
   }
 
   function removeItem(id) {
-    cart = cart.filter(x => x.id !== id);
-    saveCart();
+    cart = cart.filter(c => c.id !== id);
+    updateCartUI();
   }
 
   function clearCart() {
-    if (confirm('Are you sure you want to clear the cart?')) {
+    if(confirm('Are you sure you want to clear the cart?')) {
       cart = [];
-      saveCart();
+      updateCartUI();
     }
   }
 
-  // Update cart panel UI
-  function updateCartUI() {
-    cartItemsDiv.innerHTML = '';
-    let totalPrice = 0;
-    cart.forEach(ci => {
-      const p = PRODUCTS.find(x => x.id === ci.id);
-      if (!p) return;
+  // Cart panel toggle
+  document.getElementById('openCart').addEventListener('click', () => {
+    document.getElementById('cartPanel').style.display = 'flex';
+  });
+  document.getElementById('closeCart').addEventListener('click', () => {
+    document.getElementById('cartPanel').style.display = 'none';
+  });
+  document.getElementById('clearCart').addEventListener('click', clearCart);
 
-      const div = document.createElement('div');
-      div.className = 'cart-item';
-      div.innerHTML = `
-        <img src="${p.image}" alt="${p.title}">
-        <div class="cart-item-details">
-          <div class="cart-item-title">${p.title}</div>
-          <div class="cart-item-price">₹${p.price} × ${ci.qty} = ₹${p.price * ci.qty}</div>
-          <div class="cart-item-qty">
-            <button class="btn secondary" onclick="decrease(${p.id})">−</button>
-            <div class="qty-display">${ci.qty}</div>
-            <button class="btn" onclick="increase(${p.id})">+</button>
-            <button class="btn secondary" style="margin-left: 8px;" onclick="removeItem(${p.id})">Remove</button>
-          </div>
-        </div>
-      `;
-      cartItemsDiv.appendChild(div);
-      totalPrice += p.price * ci.qty;
-      updateQtyDisplay(p.id);
-    });
-    cartTotalEl.innerText = 'Total: ₹' + totalPrice;
-  }
+  // EmailJS initialization for signup form
+  emailjs.init('ZXnUSSn-SeH0gTwhK');
 
-  // Checkout functions
-
-  function checkout() {
-    if (cart.length === 0) {
-      alert('Your cart is empty.');
-      return;
-    }
-
-    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-
-    if (paymentMethod === 'cod') {
-      checkoutCOD();
-    } else if (paymentMethod === 'whatsapp') {
-      checkoutWhatsApp();
-    } else if (paymentMethod === 'email') {
-      checkoutEmail();
-    }
-  }
-
-  // Cash on Delivery Checkout
-  function checkoutCOD() {
-    const name = prompt('Enter your full name:');
-    if (!name) return alert('Name is required.');
-
-    const phone = prompt('Enter your phone number (e.g. 91XXXXXXXXXX):');
-    if (!phone) return alert('Phone number is required.');
-
-    const address = prompt('Enter your delivery address:');
-    if (!address) return alert('Address is required.');
-
-    let message = `New Order from Sharif.com\n\nCustomer Details:\nName: ${name}\nPhone: ${phone}\nAddress: ${address}\n\nOrder Details:\n`;
-    let total = 0;
-
-    cart.forEach(ci => {
-      const p = PRODUCTS.find(x => x.id === ci.id);
-      message += `${p.title} - ${ci.qty} × ₹${p.price} = ₹${p.price * ci.qty}\n`;
-      total += p.price * ci.qty;
-    });
-
-    message += `\nTotal Amount: ₹${total}\nPayment Method: Cash on Delivery\n\nThank you for shopping with us!`;
-
-    // For demo, just alert message. In real case, send to server or admin email
-    alert('Order Placed!\n\n' + message);
-
-    // Clear cart after order
-    cart = [];
-    saveCart();
-    cartPanel.style.display = 'none';
-  }
-
-  // WhatsApp Checkout
-  function checkoutWhatsApp() {
-    const phone = prompt('Enter WhatsApp number to send order (e.g. 91XXXXXXXXXX):');
-    if (!phone) return;
-
-    let message = 'New Order from Sharif.com:%0A%0ACustomer Details:%0AName:%0APhone:%0AAddress:%0A%0AOrder Details:%0A';
-    let total = 0;
-
-    cart.forEach(ci => {
-      const p = PRODUCTS.find(x => x.id === ci.id);
-      message += `${p.title} - ${ci.qty} × ₹${p.price} = ₹${p.price * ci.qty}%0A`;
-      total += p.price * ci.qty;
-    });
-
-    message += `%0ATotal Amount: ₹${total}%0APayment Method: WhatsApp Order%0A%0AThank you for shopping with us!`;
-
-    const url = `https://wa.me/${phone}?text=${message}`;
-    window.open(url, '_blank');
-  }
-
-  // Email Checkout
-  function checkoutEmail() {
-    const to = prompt('Enter the email address to send order to (e.g. seller@example.com):');
-    if (!to) return;
-
-    let body = 'New Order from Sharif.com\n\nCustomer Details:\nName:\nPhone:\nAddress:\n\nOrder Details:\n';
-    let total = 0;
-
-    cart.forEach(ci => {
-      const p = PRODUCTS.find(x => x.id === ci.id);
-      body += `${p.title} - ${ci.qty} × ₹${p.price} = ₹${p.price * ci.qty}\n`;
-      total += p.price * ci.qty;
-    });
-
-    body += `\nTotal Amount: ₹${total}\nPayment Method: Email Order\n\nThank you for shopping with us!`;
-
-    const mailto = `mailto:${to}?subject=${encodeURIComponent('New Order from Sharif.com')}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailto;
-  }
-
-  // Event listeners
-  openCartBtn.addEventListener('click', () => {
-    cartPanel.style.display = 'block';
-    updateCartUI();
+  // Signup form submission
+  document.getElementById('signupForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    emailjs.sendForm('service_58s4btp', '__ejs-test-mail-service__', this)
+      .then(() => {
+        alert('Thank you for signing up!');
+        this.reset();
+        document.getElementById('signupModal').style.display = 'none';
+      }, (error) => {
+        alert('Oops! Something went wrong.');
+        console.error('EmailJS error:', error);
+      });
   });
 
-  closeCartBtn.addEventListener('click', () => {
-    cartPanel.style.display = 'none';
-  });
-
-  clearCartBtn.addEventListener('click', clearCart);
-  checkoutBtn.addEventListener('click', checkout);
-
-  // Expose functions globally for inline onclick
-  window.increase = increase;
-  window.decrease = decrease;
-  window.removeItem = removeItem;
-  window.addToCart = addToCart;
-
-  renderProducts();
-  updateCartUI();
+  // On page load, render products and show signup modal
+  window.onload = function() {
+    renderProducts();
+    document.getElementById('signupModal').style.display = 'flex';
+  };
 </script>
 
 </body>
 </html>
 
-div.innerHTML = `
-  <img src="${p.image}" alt="${p.title}">
-  <div class="product-details">
-    <div class="product-title">${p.title}</div>
-    <div style="font-style:italic; color:#555; margin:5px 0;">
-      Brand: ${p.brand} | Model: ${p.model} | Quality: ${p.quality}
-    </div>
-    <div class="product-price">₹${p.price}</div>
-    <div style="margin-top:5px;">${p.description}</div>
-    <ul style="margin-top: 5px; color:#444;">
-      ${p.features.map(f => `<li>${f}</li>`).join('')}
-    </ul>
-    <div class="qty-controls">
-      <button class="btn secondary" onclick="decrease(${p.id})">−</button>
-      <div class="qty-display" id="qty-${p.id}">0</div>
-      <button class="btn" onclick="increase(${p.id})">+</button>
-      <button class="btn secondary" style="margin-left:10px;" onclick="addToCart(${p.id})">Add to Cart</button>
-    </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sharif.com - Ecommerce</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0;
+    background: #f9f9f9;
+    color: #333;
+    direction: ltr;
+  }
+  /* Sidebar / Settings menu */
+  #sidebar {
+    width: 250px;
+    background: #007bff;
+    color: white;
+    height: 100vh;
+    position: fixed;
+    top: 0; left: 0;
+    padding-top: 20px;
+    box-sizing: border-box;
+  }
+  #sidebar h2 {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  #sidebar nav a {
+    display: block;
+    color: white;
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    cursor: pointer;
+  }
+  #sidebar nav a:hover {
+    background: #0056b3;
+  }
+  #sidebar nav a.active {
+    background: #00408d;
+  }
+  
+  /* Main content */
+  #mainContent {
+    margin-left: 250px;
+    padding: 20px;
+  }
+  
+  /* Language toggle buttons */
+  #languageToggle {
+    margin-bottom: 20px;
+  }
+  #languageToggle button {
+    background: #007bff;
+    color: white;
+    border: none;
+    margin-right: 10px;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+  }
+  #languageToggle button.active {
+    background: #0056b3;
+  }
+  
+  /* Products grid */
+  .products-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+  }
+  .product-item {
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-align: center;
+  }
+  .product-item img {
+    max-width: 100%;
+    height: 140px;
+    object-fit: contain;
+    margin-bottom: 8px;
+  }
+  .product-item h3 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    color: #007bff;
+  }
+  .product-item p {
+    font-weight: 600;
+    margin: 0 0 10px 0;
+  }
+  .product-item button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 0;
+    width: 100%;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  .product-item button:hover {
+    background: #0056b3;
+  }
+  
+  /* Cart panel */
+  #cartPanel {
+    position: fixed;
+    top: 0; right: 0;
+    width: 350px;
+    height: 100vh;
+    background: white;
+    box-shadow: -3px 0 15px rgba(0,0,0,0.2);
+    padding: 20px;
+    overflow-y: auto;
+    display: none;
+    flex-direction: column;
+    z-index: 9999;
+  }
+  #cartPanel h2 {
+    margin-top: 0;
+  }
+  #closeCart {
+    background: #ccc;
+    border: none;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }
+  .cart-item {
+    display: flex;
+    margin-bottom: 15px;
+    align-items: center;
+  }
+  .cart-item img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 12px;
+  }
+  .cart-item-details {
+    flex: 1;
+  }
+  .cart-item-details div {
+    margin-bottom: 5px;
+  }
+  .qty-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .qty-controls button {
+    padding: 4px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    border: 1px solid #007bff;
+    background: white;
+    color: #007bff;
+    font-weight: bold;
+  }
+  .qty-controls button.secondary {
+    background: #eee;
+    color: #333;
+    border-color: #ccc;
+  }
+  #clearCart {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: auto;
+    font-weight: bold;
+  }
+  #clearCart:hover {
+    background: #a71d2a;
+  }
+  #cartTotal {
+    font-weight: bold;
+    font-size: 18px;
+    margin-top: 10px;
+  }
+  
+  /* Signup/order form */
+  #orderForm {
+    margin-top: 20px;
+  }
+  #orderForm input, #orderForm textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+  }
+  #orderForm button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  #orderForm button:hover {
+    background: #0056b3;
+  }
+  
+  /* Responsive */
+  @media (max-width: 1000px) {
+    #sidebar {
+      position: relative;
+      width: 100%;
+      height: auto;
+    }
+    #mainContent {
+      margin-left: 0;
+      padding: 10px;
+    }
+    .products-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    #cartPanel {
+      width: 100%;
+      height: 300px;
+      position: relative;
+      box-shadow: none;
+      padding: 10px;
+    }
+  }
+  @media (max-width: 600px) {
+    .products-container {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Sidebar with navigation and language -->
+<div id="sidebar">
+  <h2>Sharif.com</h2>
+  <nav>
+    <a href="#" id="navHome" class="active">Home | ہوم</a>
+    <a href="#" id="navOrders">Orders | آرڈرز</a>
+    <a href="#" id="navSettings">Settings | سیٹنگز</a>
+  </nav>
+  <div style="padding: 20px;">
+    <strong>Language | زبان:</strong><br />
+    <button id="btnEn" class="active">English</button>
+    <button id="btnUr">اردو</button>
   </div>
-`;
+</div>
+
+<div id="mainContent">
+  
+  <!-- HOME PAGE -->
+  <div id="pageHome">
+    <h1 data-en="Welcome to Sharif.com" data-ur="شریف ڈاٹ کام میں خوش آمدید">Welcome to Sharif.com</h1>
+    <div class="products-container" id="productsContainer"></div>
+    <button id="openCart">🛒 Cart</button>
+  </div>
+  
+  <!-- ORDERS PAGE -->
+  <div id="pageOrders" style="display:none;">
+    <h1 data-en="Your Orders" data-ur="آپ کے آرڈرز">Your Orders</h1>
+    <div id="ordersList">
+      <p data-en="No orders yet." data-ur="کوئی آرڈر نہیں ہے۔">No orders yet.</p>
+    </div>
+    <button id="openCartOrders">🛒 Cart</button>
+  </div>
+  
+  <!-- SETTINGS PAGE -->
+  <div id="pageSettings" style="display:none;">
+    <h1 data-en="Settings" data-ur="سیٹنگز">Settings</h1>
+    <p data-en="Here you can customize your website preferences." data-ur="یہاں آپ اپنی ویب سائٹ کی ترجیحات تبدیل کر سکتے ہیں۔"></p>
+    
+    <label for="homeTitleEn">Home Title (English):</label><br />
+    <input type="text" id="homeTitleEn" value="Welcome to Sharif.com" /><br />
+    <label for="homeTitleUr">Home Title (اردو):</label><br />
+    <input type="text" id="homeTitleUr" value="شریف ڈاٹ کام میں خوش آمدید" /><br /><br />
+    
+    <button id="saveSettingsBtn">Save Settings</button>
+  </div>
+  
+  <!-- CART PANEL -->
+  <div id="cartPanel">
+    <button id="closeCart">Close X</button>
+    <h2 data-en="Your Cart" data-ur="آپ کا کارٹ">Your Cart</h2>
+    <div id="cartItemsDiv"></div>
+    <div id="cartTotal">₹0</div>
+    <button id="clearCart" data-en="Clear Cart" data-ur="کارٹ خالی کریں">Clear Cart</button>
+    
+    <!-- ORDER FORM -->
+    <form id="orderForm">
+      <h3 data-en="Place Your Order" data-ur="اپنا آرڈر کریں"></h3>
+      <input type="text" name="user_name" placeholder="Full Name | مکمل نام" required />
+      <input type="email" name="user_email" placeholder="Email Address | ای میل" required />
+      <input type="tel" name="user_phone" placeholder="Phone Number | فون نمبر" required />
+      <textarea name="user_address" placeholder="Full Address (Street, City, Zip) | مکمل پتہ" required></textarea>
+      <button type="submit" data-en="Submit Order" data-ur="آرڈر بھیجیں">Submit Order</button>
+    </form>
+  </div>
+
+</div>
+
+<script src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js"></script>
+<script>
+  // Initialization
+  emailjs.init('ZXnUSSn-SeH0gTwhK');
+
+  // Data
+  const PRODUCTS = [
+    {id:1,titleEn:"Microphone X100",titleUr:"مائکروفون X100",price:2500,image:"https://via.placeholder.com/150?text=Mic+X100"},
+    {id:2,titleEn:"Wireless Headphones",titleUr:"وائرلیس ہیڈفون",price:3500,image:"https://via.placeholder.com/150?text=Headphones"},
+    {id:3,titleEn:"USB-C Cable",titleUr:"یو ایس بی سی کیبل",price:300,image:"https://via.placeholder.com/150?text=USB-C+Cable"},
+    {id:4,titleEn:"Bluetooth Speaker",titleUr:"بلوٹوتھ اسپیکر",price:2200,image:"https://via.placeholder.com/150?text=Speaker"},
+    {id:5,titleEn:"Laptop Stand",titleUr:"لیپ ٹاپ اسٹینڈ",price:1800,image:"https://via.placeholder.com/150?text=Laptop+Stand"},
+    {id:6,titleEn:"Gaming Mouse",titleUr:"گیمنگ ماؤس",price:1500,image:"https://via.placeholder.com/150?text=Gaming+Mouse"},
+    {id:7,titleEn:"Webcam HD",titleUr:"ویب کیم HD",price:2800,image:"https://via.placeholder.com/150?text=Webcam+HD"},
+    {id:8,titleEn:"Power Bank 10000mAh",titleUr:"پاور بینک 10000mAh",price:2000,image:"https://via.placeholder.com/150?text=Power+Bank"}
+  ];
+
+  let cart = [];
+  let orders = [];
+
+  // Language state
+  let currentLang = 'en'; // default English
+
+  // DOM references
+  const productsContainer = document.getElementById('productsContainer');
+  const cartPanel = document.getElementById('cartPanel');
+  const cartItemsDiv = document.getElementById('cartItemsDiv');
+  const cartTotalEl = document.getElementById('cartTotal');
+  const orderForm = document.getElementById('orderForm');
+  const ordersList = document.getElementById('ordersList');
+
+  // Render products based on language
+  function renderProducts() {
+    productsContainer.innerHTML = '';
+    PRODUCTS.forEach(p => {
+      const div = document.createElement('div');
+      div.className = 'product-item';
+      div.innerHTML = `
+        <img src="${p.image}" alt="${currentLang === 'en' ? p.titleEn : p.titleUr}" />
+        <h3>${currentLang === 'en' ? p.titleEn : p.titleUr}</h3>
+        <p>₹${p.price}</p>
+        <button onclick="addToCart(${p.id})">${currentLang === 'en' ? 'Add to Cart' : 'کارٹ میں ڈالیں'}</button>
+      `;
+      productsContainer.appendChild(div);
+    });
+  }
+
+  // Cart Functions
+  function addToCart(id) {
+    const item = cart.find(c => c.id === id);
+    if(item) item.qty++;
+    else cart.push({id, qty:1});
+    updateCartUI();
+  }
+  function increase(id) {
+    const item = cart.find(c => c.id === id);
+    if(item) {
+      item.qty++;
+      updateCartUI();
+    }
+  }
+  function decrease(id) {
+    const item = cart.find(c => c.id === id);
+    if(item) {
+      item.qty--;
+      if(item.qty <= 0) {
+        cart = cart.filter(c => c.id !== id);
+      }
+      updateCartUI();
+    }
+  }
+  function removeItem(id) {
+    cart = cart.filter(c => c.id !== id);
+    updateCartUI();
+  }
+  function clearCart() {
+    if(confirm(currentLang === 'en' ? 'Are you sure to clear cart?' : 'کیا آپ کارٹ خالی کرنا چاہتے ہیں؟')) {
+      cart = [];
+      updateCartUI();
+    }
+  }
+  function updateCartUI() {
+    cartItemsDiv.innerHTML = '';
+    let total = 0;
+    cart.forEach(ci => {
+      const p = PRODUCTS.find(pr => pr.id === ci.id);
+      if(!p) return;
+      const div = document.createElement('div');
+      div.className = 'cart-item';
+      div.innerHTML = `
+        <img src="${p.image}" alt="${currentLang === 'en' ? p.titleEn : p.titleUr}" />
+        <div class="cart-item-details">
+          <div><strong>${currentLang === 'en' ? p.titleEn : p.titleUr}</strong></div>
+          <div>₹${p.price} x ${ci.qty} = ₹${p.price*ci.qty}</div>
+          <div class="qty-controls">
+            <button class="secondary" onclick="decrease(${p.id})">−</button>
+            <div>${ci.qty}</div>
+            <button onclick="increase(${p.id})">+</button>
+            <button class="secondary" onclick="removeItem(${p.id})" style="margin-left:8px;">${currentLang === 'en' ? 'Remove' : 'ہٹائیں'}</button>
+          </div>
+        </div>
+      `;
+      cartItemsDiv.appendChild(div);
+      total += p.price * ci.qty;
+    });
+    cartTotalEl.innerText = `₹${total}`;
+  }
+
+  // Sidebar navigation
