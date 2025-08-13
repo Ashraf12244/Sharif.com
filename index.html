@@ -382,20 +382,28 @@
   // EmailJS initialization for signup form
   emailjs.init('ZXnUSSn-SeH0gTwhK');
 
-  // Signup form submission
-  document.getElementById('signupForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    emailjs.sendForm('service_58s4btp', '__ejs-test-mail-service__', this)
-      .then(() => {
-        alert('Thank you for signing up!');
-        this.reset();
-        document.getElementById('signupModal').style.display = 'none';
-      }, (error) => {
-        alert('Oops! Something went wrong.');
-        console.error('EmailJS error:', error);
-      });
-  });
 
+  // Signup form submission
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+    (function() {
+        emailjs.init("DapdU3gPmJ8ymUdD2"); 
+    })();
+
+    document.getElementById("signup-form").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        emailjs.sendForm(
+            "service_hwvi11g",  
+            "template_kp1zovr", 
+            this
+        ).then(function() {
+            alert("Signup successful! Your details have been sent.");
+        }, function(error) {
+            alert("Signup failed. Please try again. Error: " + JSON.stringify(error));
+        });
+    });
+</script>
   // On page load, render products and show signup modal
   window.onload = function() {
     renderProducts();
