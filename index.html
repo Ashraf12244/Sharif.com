@@ -88,6 +88,8 @@
         <button class="btn ghost" data-nav="home">Home</button>
         <button class="btn ghost" data-nav="orders">Orders</button>
         <button class="btn ghost" data-nav="settings">Settings</button>
+        <a href="admin.html" class="btn ghost">Admin Panel</a>
+        <a href="products.html" class="btn ghost">Products List</a>
       </div>
     </div>
   </header>
@@ -97,8 +99,7 @@
 
     <!-- CATEGORY TABS -->
     <div class="tabs" id="catTabs"></div>
-
-    <!-- HOME PAGE -->
+<!-- HOME PAGE -->
     <section id="pageHome" class="page active">
       <h2 id="homeTitle">Featured Products</h2>
       <div class="grid" id="productsGrid"></div>
@@ -173,8 +174,7 @@
       <input type="email" name="user_email" placeholder="Email" required />
       <input type="tel" name="user_phone" placeholder="Phone" required />
       <textarea name="user_address" placeholder="Full Address (Street, City, Zip)" required></textarea>
-
-      <!-- Hidden fields to send cart summary -->
+<!-- Hidden fields to send cart summary -->
       <input type="hidden" name="order_details" id="order_details">
       <input type="hidden" name="order_total" id="order_total">
 
