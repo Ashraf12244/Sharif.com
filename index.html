@@ -364,6 +364,132 @@
       <button class="btn" onclick="saveStoreSettings()">Save Settings</button>
       <button class="btn danger" onclick="resetStoreSettings()">Reset</button>
 
+     <!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <!-- تمام ہیڈ کا مواد پہلے کی طرح رہے گا -->
+  <style>
+    /* تمام سٹائلز پہلے کی طرح */
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    // Initialize EmailJS
+    emailjs.init('DapdU3gPmJ8ymUdD2');
+    
+    // State Management
+    let products = JSON.parse(localStorage.getItem('products')) || [];
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let settings = JSON.parse(localStorage.getItem('settings')) || { storeName: 'Sharif.com', currency: '₹' };
+    
+    // DOM Elements
+    const productsGrid = document.getElementById('productsGrid');
+    const imageInput = document.getElementById('imageInput');
+    const imagePreview = document.getElementById('imagePreview');
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', function() {
+      renderProducts(); // یہ لائن یقینی بنائیں کہ موجود ہے
+    });
+
+    // Product Management - یہ نیا درست فنکشن
+    function addProduct() {
+      const title = document.getElementById('adminTitle').value;
+      const brand = document.getElementById('adminBrand').value;
+      const description = document.getElementById('adminDescription').value;
+      const price = parseFloat(document.getElementById('adminPrice').value);
+      const file = imageInput.files[0];
+
+      if (!title || !price) {
+        alert('Please enter at least product title and price');
+        return;
+      }
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const newProduct = {
+            title,
+            brand,
+            description,
+            price,
+            image: e.target.result
+          };
+          products.push(newProduct);
+          localStorage.setItem('products', JSON.stringify(products));
+          renderProducts(); // یہ لائن ضروری ہے
+          clearAdminForm();
+          alert('Product added successfully!');
+        };
+        reader.readAsDataURL(file);
+      } else {
+        const newProduct = {
+          title,
+          brand,
+          description,
+          price,
+          image: 'https://via.placeholder.com/300'
+        };
+        products.push(newProduct);
+        localStorage.setItem('products', JSON.stringify(products));
+        renderProducts(); // یہ لائن ضروری ہے
+        clearAdminForm();
+        alert('Product added successfully (without image)!');
+      }
+    }
+
+    // Render Products - یہ فنکشن یقینی بناتا ہے کہ پروڈکٹس ہوم پیج پر دکھائی دیں
+    function renderProducts() {
+      productsGrid.innerHTML = '';
+      products.forEach((product, index) => {
+        const productCard = document.createElement('div');
+        productCard.className = 'card';
+        productCard.innerHTML = `
+          <img src="${product.image}" alt="${product.title}">
+          <div class="title">${product.title}</div>
+          <div class="description">${product.description || ''}</div>
+          <div class="price">${settings.currency}${product.price.toLocaleString()}</div>
+          <div class="product-actions">
+            <button class="btn" onclick="addToCart(${index})">Add to Cart</button>
+            <button class="btn success" onclick="showOrderForm(${index})">Buy Now</button>
+          </div>
+        `;
+        productsGrid.appendChild(productCard);
+      });
+    }
+
+    // Clear Admin Form
+    function clearAdminForm() {
+      document.getElementById('adminTitle').value = '';
+      document.getElementById('adminBrand').value = '';
+      document.getElementById('adminDescription').value = '';
+      document.getElementById('adminPrice').value = '';
+      imageInput.value = '';
+      imagePreview.style.display = 'none';
+    }
+
+    // Send Order Email - EmailJS انٹیگریشن
+    function sendOrderEmail(orderDetails) {
+      emailjs.send('service_hwvi11g', 'template_kp1zovr', {
+        to_email: 'ashraf97941@gmail.com',
+        order_details: orderDetails,
+        from_name: document.getElementById('orderName').value,
+        from_email: document.getElementById('orderEmail').value,
+        phone: document.getElementById('orderPhone').value,
+        address: document.getElementById('orderAddress').value
+      }).then(() => {
+        alert('Order placed successfully!');
+      }, (err) => {
+        console.error('Email failed:', err);
+      });
+    }
+
+    // باقی تمام فنکشنز (addToCart, showOrderForm, etc.) پہلے کی طرح رہیں گے
+  </script>
+</head>
+<body>
+  <!-- باقی HTML کوڈ پہلے کی طرح -->
+</body>
+</html> 
       <h2>Address Book</h2>
       <div class="setgrid">
         <input type="text" placeholder="Name" id="custName">
@@ -588,7 +714,7 @@
         clearAdminForm();
         alert(currentLanguage === 'ur' ? 'پروڈکٹ کامیابی سے شامل کی گئی (بغیر تصویر کے)!' : 
               currentLanguage === 'mm' ? 'ထုတ်ကုန်အောင်မြင်စွာထည့်ပြီးပါပြီ (ဓာတ်ပုံမပါဘဲ)!' : 
-              'Product added successfully (without image)!');
+              'Product added successfully (on)!');
       }
     }
 
