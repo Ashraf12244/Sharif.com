@@ -364,20 +364,6 @@
       <button class="btn" onclick="saveStoreSettings()">Save Settings</button>
       <button class="btn danger" onclick="resetStoreSettings()">Reset</button>
 
-      <h2>Product Management</h2>
-      <div class="setgrid">
-        <input type="text" placeholder="Product Title" id="adminTitle">
-        <input type="text" placeholder="Brand" id="adminBrand">
-        <textarea placeholder="Description" id="adminDescription"></textarea>
-        <input type="number" placeholder="Price" id="adminPrice">
-        <input type="file" id="imageInput" accept="image/*">
-        <img id="imagePreview" src="" alt="Preview" style="max-width: 200px; display: none; margin-top: 10px;">
-      </div>
-      <button class="btn" id="adminAddProductBtn" onclick="showPasswordPrompt('addProduct')">Add Product</button>
-
-      <h2>Current Products</h2>
-      <div class="grid" id="adminProductList"></div>
-
       <h2>Address Book</h2>
       <div class="setgrid">
         <input type="text" placeholder="Name" id="custName">
@@ -500,8 +486,7 @@
         document.getElementById('pageSettings').style.display = 'none';
       }
     });
-
-    // Toggle three-line menu
+  // Toggle three-line menu
     function toggleMenu() {
       document.getElementById('threeLineMenu').classList.toggle('active');
     }
