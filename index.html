@@ -1,73 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Sharif.com — Ecommerce</title>
-<style>
-  :root{
-    --brand:#007bff;
-    --brand-dark:#0056b3;
-    --bg:#f5f6f8;
-    --text:#222;
-    --muted:#666;
-    --card:#fff;
-    --danger:#dc3545;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
-  a{color:inherit;text-decoration:none}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sharif.com — Ecommerce</title>
+  <style>
+    :root{
+      --brand:#007bff;
+      --brand-dark:#0056b3;
+      --bg:#f5f6f8;
+      --text:#222;
+      --muted:#666;
+      --card:#fff;
+      --danger:#dc3545;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    a{color:inherit;text-decoration:none}
 
-  /* Header / Navbar */
-  header{background:var(--brand);color:#fff;padding:12px 16px;position:sticky;top:0;z-index:10}
-  .nav{display:flex;align-items:center;gap:12px}
-  .logo{font-weight:800;font-size:20px;letter-spacing:.2px}
-  .search{flex:1;display:flex;gap:8px;max-width:720px;margin:0 12px}
-  .search input{flex:1;padding:10px;border:0;border-radius:8px}
-  .btn{background:#fff;color:var(--brand);border:0;border-radius:8px;padding:10px 12px;font-weight:700;cursor:pointer}
-  .btn.secondary{background:#eef3ff;color:var(--brand)}
-  .btn.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5)}
-  .pill{padding:6px 10px;border-radius:999px;background:#fff;color:var(--brand);font-weight:700}
+    /* Header / Navbar */
+    header{background:var(--brand);color:#fff;padding:12px 16px;position:sticky;top:0;z-index:10}
+    .nav{display:flex;align-items:center;gap:12px}
+    .logo{font-weight:800;font-size:20px;letter-spacing:.2px}
+    .search{flex:1;display:flex;gap:8px;max-width:720px;margin:0 12px}
+    .search input{flex:1;padding:10px;border:0;border-radius:8px}
+    .btn{background:#fff;color:var(--brand);border:0;border-radius:8px;padding:10px 12px;font-weight:700;cursor:pointer}
+    .btn.secondary{background:#eef3ff;color:var(--brand)}
+    .btn.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5)}
+    .pill{padding:6px 10px;border-radius:999px;background:#fff;color:var(--brand);font-weight:700}
 
-  /* Layout */
-  .bar{display:flex;gap:10px;align-items:center}
-  .wrap{padding:16px;max-width:1200px;margin:0 auto}
-  .tabs{display:flex;gap:10px;flex-wrap:wrap}
-  .tab{padding:8px 12px;border-radius:8px;background:#eaf1ff;color:#1a4fb8;cursor:pointer}
-  .tab.active{background:#1a4fb8;color:#fff}
+    /* Layout */
+    .bar{display:flex;gap:10px;align-items:center}
+    .wrap{padding:16px;max-width:1200px;margin:0 auto}
+    .tabs{display:flex;gap:10px;flex-wrap:wrap}
+    .tab{padding:8px 12px;border-radius:8px;background:#eaf1ff;color:#1a4fb8;cursor:pointer}
+    .tab.active{background:#1a4fb8;color:#fff}
 
-  /* Grid */
-  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-  @media (max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}}
-  @media (max-width:600px){.grid{grid-template-columns:1fr}}
-  .card{background:var(--card);border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.08);padding:12px;display:flex;flex-direction:column}
-  .card img{width:100%;height:160px;object-fit:contain;background:#fff;border-radius:8px}
-  .title{font-weight:700;margin:8px 0 4px}
-  .muted{color:var(--muted);font-size:14px}
-  .price{font-size:18px;font-weight:800;margin-top:4px}
-  .row{display:flex;align-items:center;justify-content:space-between;gap:8px}
-  .badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
-  .badge{font-size:12px;background:#eef3ff;color:#1a4fb8;border-radius:999px;padding:4px 8px;font-weight:700}
+    /* Grid */
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    @media (max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:600px){.grid{grid-template-columns:1fr}}
+    .card{background:var(--card);border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.08);padding:12px;display:flex;flex-direction:column}
+    .card img{width:100%;height:160px;object-fit:contain;background:#fff;border-radius:8px}
+    .title{font-weight:700;margin:8px 0 4px}
+    .muted{color:var(--muted);font-size:14px}
+    .price{font-size:18px;font-weight:800;margin-top:4px}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+    .badge{font-size:12px;background:#eef3ff;color:#1a4fb8;border-radius:999px;padding:4px 8px;font-weight:700}
 
-  /* Panels */
-  #cartPanel{position:fixed;right:0;top:0;width:380px;max-width:100%;height:100%;background:#fff;box-shadow:-4px 0 16px rgba(0,0,0,.15);padding:16px;display:none;flex-direction:column;z-index:20}
-  .cart-line{display:flex;gap:10px;margin:10px 0}
-  .cart-line img{width:64px;height:64px;object-fit:contain;border:1px solid #eee;border-radius:8px}
-  .qty{display:flex;align-items:center;gap:6px;margin-top:6px}
-  .btn.icon{padding:6px 10px;border:1px solid var(--brand);background:#fff;color:var(--brand)}
-  .btn.danger{background:var(--danger);color:#fff}
+    /* Panels */
+    #cartPanel{position:fixed;right:0;top:0;width:380px;max-width:100%;height:100%;background:#fff;box-shadow:-4px 0 16px rgba(0,0,0,.15);padding:16px;display:none;flex-direction:column;z-index:20}
+    .cart-line{display:flex;gap:10px;margin:10px 0}
+    .cart-line img{width:64px;height:64px;object-fit:contain;border:1px solid #eee;border-radius:8px}
+    .qty{display:flex;align-items:center;gap:6px;margin-top:6px}
+    .btn.icon{padding:6px 10px;border:1px solid var(--brand);background:#fff;color:var(--brand)}
+    .btn.danger{background:var(--danger);color:#fff}
 
-  /* Pages */
-  .page{display:none}
-  .page.active{display:block}
+    /* Pages */
+    .page{display:none}
+    .page.active{display:block}
 
-  /* Settings */
-  .setgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-  .setgrid input,.setgrid select, textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;background:#fff}
+    /* Settings */
+    .setgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .setgrid input,.setgrid select, textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #ddd;background:#fff}
 
-  /* Footer */
-  footer{padding:20px;text-align:center;color:#777}
+    /* Footer */
+    footer{padding:20px;text-align:center;color:#777}
+
+    /* Responsive Design for Mobile */
+    @media (max-width: 768px) {
+      header { padding: 8px; }
+      .nav { flex-direction: column; gap: 8px; }
+      .search { margin: 0; }
+      .bar { flex-direction: column; gap: 5px; }
+      .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+      .card img { height: 120px; }
+      #cartPanel { width: 100%; }
+      .wrap { padding: 8px; }
+    }
 </style>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <!-- Cloudinary Widget -->
+  <script src="https://upload-widget.cloudinary.com/latest/global/all.js"></script>
 </head>
 <body>
 
@@ -88,8 +105,8 @@
         <button class="btn ghost" data-nav="home">Home</button>
         <button class="btn ghost" data-nav="orders">Orders</button>
         <button class="btn ghost" data-nav="settings">Settings</button>
-        <a href="admin.html" class="btn ghost">Admin Panel</a>
-        <a href="products.html" class="btn ghost">Products List</a>
+        <button class="btn ghost" data-nav="admin">Admin Panel</button>
+        <button class="btn ghost" data-nav="products">Products List</button>
       </div>
     </div>
   </header>
@@ -99,7 +116,7 @@
 
     <!-- CATEGORY TABS -->
     <div class="tabs" id="catTabs"></div>
-<!-- HOME PAGE -->
+    <!-- HOME PAGE -->
     <section id="pageHome" class="page active">
       <h2 id="homeTitle">Featured Products</h2>
       <div class="grid" id="productsGrid"></div>
@@ -149,6 +166,39 @@
       </div>
     </section>
 
+    <!-- ADMIN PANEL PAGE -->
+    <section id="pageAdmin" class="page">
+      <h2>Add Product</h2>
+      <div class="setgrid">
+        <div>
+          <label>Product Title</label>
+          <input id="productTitle" placeholder="Product Title" required />
+        </div>
+        <div>
+          <label>Brand</label>
+          <input id="productBrand" placeholder="Brand" required />
+        </div>
+        <div style="grid-column:1/-1">
+          <label>Description</label>
+          <textarea id="productDescription" placeholder="Description" required></textarea>
+        </div>
+        <div>
+          <label>Price</label>
+          <input id="productPrice" type="number" placeholder="Price" required />
+        </div>
+        <div style="grid-column:1/-1">
+          <button id="upload_widget" class="btn">Upload Image</button>
+        </div>
+      </div>
+      <button class="btn" onclick="addProduct()">Add Product</button>
+    </section>
+
+    <!-- PRODUCTS LIST PAGE -->
+    <section id="pageProducts" class="page">
+      <h2>Products List</h2>
+      <div class="grid" id="productsListGrid"></div>
+    </section>
+
   </main>
 
   <!-- NOTICE -->
@@ -174,7 +224,7 @@
       <input type="email" name="user_email" placeholder="Email" required />
       <input type="tel" name="user_phone" placeholder="Phone" required />
       <textarea name="user_address" placeholder="Full Address (Street, City, Zip)" required></textarea>
-<!-- Hidden fields to send cart summary -->
+      <!-- Hidden fields to send cart summary -->
       <input type="hidden" name="order_details" id="order_details">
       <input type="hidden" name="order_total" id="order_total">
 
@@ -260,6 +310,8 @@
       if(name==='home') document.getElementById('pageHome').classList.add('active');
       if(name==='orders'){ document.getElementById('pageOrders').classList.add('active'); renderOrders(); }
       if(name==='settings') { document.getElementById('pageSettings').classList.add('active'); loadSettingsForm(); }
+      if(name==='admin') { document.getElementById('pageAdmin').classList.add('active'); }
+      if(name==='products') { document.getElementById('pageProducts').classList.add('active'); loadProducts(); }
       window.scrollTo({top:0,behavior:'smooth'});
     }
 
