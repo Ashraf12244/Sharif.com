@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sharif.com — Ecommerce</title>
+  <style>
+    :root { --brand: #007bff; --brand-dark: #0056b3; --bg: #f5f6f8; --text: #222; --muted: #666; --card: #fff; --danger: #dc3545; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+    a { color: inherit; text-decoration: none; }
+
+    header { background: var(--brand); color: #fff; padding: 12px 16px; position: sticky; top: 0; z-index: 10; }
+    .nav { display: flex; align-items: center; gap: 12px; }
+    .logo { font-weight: 800; font-size: 20px; }
+    .search { flex: 1; display: flex; gap: 8px; max-width: 720px; margin: 0 12px; }
+    .search input { flex: 1; padding: 10px; border: 0; border-radius: 8px; }
+    .btn { background: #fff; color: var(--brand); border: 0; border-radius: 8px; padding: 10px 12px; font-weight: 700; cursor: pointer; }
+    .btn.secondary { background: #eef3ff; color: var(--brand); }
+    .btn.ghost { background: transparent; color: #fff; border: 1px solid rgba(255, 255, 255, .5); }
+    .pill { padding: 6px 10px; border-radius: 999px; background: #fff; color: var(--brand); font-weight: 700; }
+
+    .bar { display: flex; gap: 10px; align-items: center; }
+    .wrap { padding: 16px; max-width: 1200px; margin: 0 auto; }
+    .tabs { display: flex; gap: 10px; flex-wrap: wrap; }
+    .tab { padding: 8px 12px; border-radius: 8px; background: #eaf1ff; color: #1a4fb8; cursor: pointer; }
+    .tab.active { background: #1a4fb8; color: #fff; }
+
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    @media (max-width: 1000px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+    .card { background: var(--card); border-radius: 12px; box-shadow: 0 2px 10px rgba(0, 0, 0, .08); padding: 12px; }
+    .card img { width: 100%; height: 160px; object-fit: contain; background: #fff; border-radius: 8px; }
+    .title { font-weight: 700; margin: 8px 0 4px; }
+    .muted { color: var(--muted); font-size: 14px; }
+    .price { font-size: 18px; font-weight: 800; margin-top: 4px; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+    .badge { font-size: 12px; background: #eef3ff; color: #1a4fb8; border-radius: 999px; padding: 4px 8px; font-weight: 700; }
+
+    #cartPanel { position: fixed; right: 0; top: 0; width: 380px; max-width: 100%; height: 100%; background: #fff; box-shadow: -4px 0 16px rgba(0, 0, 0, .15); padding: 16px; display: none; flex-direction: column; z-index: 20; }
+    .cart-line { display: flex; gap: 10px; margin: 10px 0; }
+    .cart-line img { width: 64px; height: 64px; object-fit: contain; border: 1px solid #eee; border-radius: 8px; }
+    .qty { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
+    .btn.icon { padding: 6px 10px; border: 1px solid var(--brand); background: #fff; color: var(--brand); }
+    .btn.danger { background: var(--danger); color: #fff; }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .setgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .setgrid input, .setgrid select, .setgrid textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; background: #fff; }
+
+    footer { padding: 20px; text-align: center; color: #777; }
+
+    @media (max-width: 768px) {
+      header { padding: 8px; }
+      .nav { flex-direction: column; gap: 8px; }
+      .search { margin: 0; width: 100%; }
+      .bar { flex-direction: column; gap: 5px; }
+      .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+      .card img { height: 120px; }
+      #cartPanel { width: 100%; }
+      .wrap { padding: 8px; }
+      .setgrid { grid-template-columns: 1fr; }
+    }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="nav">
+      <div class="logo" id="brandLogo">Sharif.com</div>
+      <div class="search">
+        <input id="searchInput" type="search" placeholder="Search products…" />
+        <button class="btn" id="searchBtn">Search</button>
+      </div>
+      <div class="bar">
+        <button class="btn ghost" id="langEn">EN</button>
+        <button class="btn ghost" id="langUr">اردو</button>
+        <button class="btn" id="openCart">Cart 🛒 <span id="cartCount" class="pill">0</span></button>
+        <button class="btn ghost" data-nav="home">Home</button>
+        <button class="btn ghost" data-nav="admin">Admin Panel</button>
+        <button class="btn ghost" data-nav="products">Products List</button>
+        <button class="btn ghost" data-nav="settings">Settings</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="wrap">
+    <!-- TABS -->
+    <div class="tabs" id="catTabs"></div>
+
+    <!-- HOME PAGE -->
+    <section id="pageHome" class="page active">
+      <h2 id="homeTitle">Featured Products</h2>
+      <div class="grid" id="productsGrid"></div>
+    </section>
+
+    <!-- ADMIN PANEL PAGE -->
+    <section id="pageAdmin" class="page">
+      <h2>Add Product</h2>
+      <div class="setgrid">
+        <div><input type="text" placeholder="Product Title" id="adminTitle" required /></div>
+        <div><input type="text" placeholder="Brand" id="adminBrand" required /></div>
+        <div style="grid-column:1/-1"><textarea placeholder="Description" id="adminDescription" required></textarea></div>
+        <div><input type="number" placeholder="Price" id="adminPrice" required /></div>
+        <div style="grid-column:1/-1">
+          <input type="file" id="imageInput" accept="image/*" style="display:none;" />
+          <button id="uploadWidget" class="btn" onclick="triggerFileInput()">Select Image from Gallery</button>
+          <img id="imagePreview" src="" alt="Image Preview" style="display:none; max-width: 200px; margin-top: 10px;" />
+          <input type="hidden" id="adminImage" />
+        </div>
+      </div>
+      <button class="btn" onclick="addProduct()">Add Product</button>
+    </section>
+
+    <!-- PRODUCTS LIST PAGE -->
+    <section id="pageProducts" class="page">
+      <h2>Products List</h2>
+      <div class="grid" id="productsListGrid"></div>
+    </section>
+
+    <!-- SETTINGS PAGE -->
+    <section id="pageSettings" class="page">
+      <h2>Store & Customer Settings</h2>
+      <div class="setgrid">
+        <!-- Store Settings -->
+        <div><label>Brand Name</label><input id="setBrand" value="Sharif.com" /></div>
+        <div><label>Currency Symbol</label><input id="setCurr" value="₹" /></div>
+        <div><label>Default Language</label><select id="setLang"><option value="en" selected>English</option><option value="ur">اردو</option></select></div>
+        <div><label>Enable Cash on Delivery</label><select id="setCOD"><option value="on" selected>On</option><option value="off">Off</option></select></div>
+        <div style="grid-column:1/-1"><label>Store Notice</label><textarea id="setNotice" rows="3">Free delivery on orders over ₹999.</textarea></div>
+
+        <!-- Customer Address Settings -->
+        <div><label>Customer Name</label><input id="custName" placeholder="Customer Name" /></div>
+        <div><label>Email Address</label><input type="email" id="custEmail" placeholder="customer@example.com" /></div>
+        <div><label>Phone Number</label><input type="tel" id="custPhone" placeholder="+91-123-456-7890" /></div>
+        <div style="grid-column:1/-1"><label>Full Address</label><textarea id="custAddress" placeholder="Street, City, Zip" rows="3"></textarea></div>
+        <div style="grid-column:1/-1">
+          <button class="btn" id="saveCustSettings">Save Customer Details</button>
+          <button class="btn secondary" id="resetCustSettings">Reset</button>
+        </div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:10px">
+        <button class="btn" id="saveSettings">Save Store Settings</button>
+        <button class="btn secondary" id="resetSettings">Reset Store Settings</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- NOTICE -->
+  <div class="wrap"><p id="storeNotice" class="muted"></p></div>
+
+  <!-- CART PANEL + ORDER FORM -->
+  <aside id="cartPanel">
+    <div class="row" style="margin-bottom:8px">
+      <h3 id="cartTitle" style="margin:0">Your Cart</h3>
+      <button class="btn icon" id="closeCart">✕</button>
+    </div>
+    <div id="cartItems"></div>
+    <div class="row" style="margin-top:10px">
+      <div class="price" id="cartTotal">₹0</div>
+      <button class="btn danger" id="clearCart">Clear</button>
+    </div>
+    <hr style="margin:14px 0">
+    <h3 id="orderFormTitle" style="margin:6px 0 8px">Delivery Details</h3>
+    <form id="orderForm">
+      <input type="text" name="user_name" placeholder="Your Name" required />
+      <input type="email" name="user_email" placeholder="Your Email" required />
+      <input type="tel" name="user_phone" placeholder="Your Phone" required />
+      <textarea name="user_address" placeholder="Full Address" required></textarea>
+      <input type="hidden" name="order_details" id="order_details" />
+      <input type="hidden" name="order_total" id="order_total" />
+      <button class="btn" type="submit" style="width:100%;margin-top:8px">Place Order</button>
+    </form>
+    <p class="muted" style="margin-top:8px" id="codNote">Cash on Delivery available.</p>
+  </aside>
+
+  <footer>© <span id="brandFooter">Sharif.com</span> — Built for your business.</footer>
+
+  <script>
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyD8pAE_mquNZTUujvEK-1v9xmDsUohdYcQ",
+      authDomain: "sharifcom-45d95.firebaseapp.com",
+      projectId: "sharifcom-45d95",
+      storageBucket: "sharifcom-45d95.firebasestorage.app",
+      messagingSenderId: "273914972899",
+      appId: "1:273914972899:web:65e17d821111e4ac64d3d6",
+      measurementId: "G-GZWZ52NDS1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // EmailJS Config
+    const EMAILJS_SERVICE = 'service_hwvi11g';
+    const EMAILJS_TEMPLATE = 'template_kp1zovr';
+    const EMAILJS_PUBLIC = 'DapdU3gPmJ8ymUdD2';
+    emailjs.init(EMAILJS_PUBLIC);
+
+    // State
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    let settings = JSON.parse(localStorage.getItem('settings') || '{}');
+    let customers = JSON.parse(localStorage.getItem('customers') || '{}');
+    let currentLang = settings.lang || 'en';
+    let currentPage = 'home';
+
+    // DOM Elements
+    const brandLogo = document.getElementById('brandLogo');
+    const brandFooter = document.getElementById('brandFooter');
+    const catTabs = document.getElementById('catTabs');
+    const productsGrid = document.getElementById('productsGrid');
+    const productsListGrid = document.getElementById('productsListGrid');
+    const searchInput = document.getElementById('searchInput');
+    const cartPanel = document.getElementById('cartPanel');
+    const cartItems = document.getElementById('cartItems');
+    const cartCount = document.getElementById('cartCount');
+    const cartTotal = document.getElementById('cartTotal');
+    const ordersList = document.getElementById('ordersList');
+    const storeNotice = document.getElementById('storeNotice');
+    const codNote = document.getElementById('codNote');
+
+    // Navigation
+    document.querySelectorAll('[data-nav]').forEach(b => {
+      b.onclick = () => showPage(b.dataset.nav);
+    });
+
+    // Cart Toggles
+    document.getElementById('openCart').onclick = () => { cartPanel.style.display = 'flex'; renderCart(); };
+    document.getElementById('closeCart').onclick = () => { cartPanel.style.display = 'none'; };
+    document.getElementById('clearCart').onclick = clearCart;
+
+    // Search
+    document.getElementById('searchBtn').onclick = renderProducts;
+    searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') renderProducts(); });
+
+    // Settings Controls
+    document.getElementById('saveSettings').onclick = saveStoreSettings;
+    document.getElementById('resetSettings').onclick = resetStoreSettings;
+    document.getElementById('saveCustSettings').onclick = saveCustomerSettings;
+    document.getElementById('resetCustSettings').onclick = resetCustomerSettings;
+
+    // Language Switch
+    document.getElementById('langEn').onclick = () => switchLang('en');
+    document.getElementById('langUr').onclick = () => switchLang('ur');
+
+    // Categories
+    const CATEGORIES = ['All', 'Audio', 'Accessories', 'Computers', 'Mobiles'];
+    function initCategories() {
+      catTabs.innerHTML = '';
+      CATEGORIES.forEach(c => {
+        const a = document.createElement('div');
+        a.className = 'tab' + (c === 'All' ? ' active' : '');
+        a.textContent = c;
+        a.onclick = () => { currentCat = c; document.querySelectorAll('.tab').forEach(x => x.classList.remove('active')); a.classList.add('active'); renderProducts(); };
+        catTabs.appendChild(a);
+      });
+    }
+
+    // Show Page
+    function showPage(name) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      if (name === 'home') document.getElementById('pageHome').classList.add('active');
+      if (name === 'admin') document.getElementById('pageAdmin').classList.add('active');
+      if (name === 'products') document.getElementById('pageProducts').classList.add('active');
+      if (name === 'settings') document.getElementById('pageSettings').classList.add('active');
+      currentPage = name;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Render Products
+    let currentCat = 'All';
+    function renderProducts() {
+      const q = searchInput.value.trim().toLowerCase();
+      const curr = settings.curr || '₹';
+      productsGrid.innerHTML = '';
+      db.collection('products').get().then(snapshot => {
+        snapshot.forEach(doc => {
+          const p = doc.data();
+          if ((currentCat === 'All' || p.category === currentCat) && (p.title.toLowerCase().includes(q) || p.description.toLowerCase().includes(q))) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+              <img src="${p.image}" alt="${p.title}">
+              <div class="title">${p.title}</div>
+              <div class="muted">${p.description}</div>
+              <div class="price">${curr}${p.price}</div>
+              <div class="badges">
+                ${settings.cod !== 'off' ? '<span class="badge">Cash on Delivery</span>' : ''}
+                <span class="badge">${p.category}</span>
+              </div>
+              <div class="row" style="margin-top:10px">
+                <button class="btn" onclick="addToCart('${doc.id}')">${currentLang === 'en' ? 'Add to Cart' : 'کارٹ میں ڈالیں'}</button>
+              </div>
+            `;
+            productsGrid.appendChild(card);
+          }
+        });
+      });
+      storeNotice.textContent = settings.notice || 'Free delivery on orders over ₹999.';
+    }
+
+    // Render Products List
+    function renderProductsList() {
+      const curr = settings.curr || '₹';
+      productsListGrid.innerHTML = '';
+      db.collection('products').get().then(snapshot => {
+        snapshot.forEach(doc => {
+          const p = doc.data();
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <img src="${p.image}" alt="${p.title}">
+            <div class="title">${p.title}</div>
+            <div class="muted">${p.brand}</div>
+            <div class="price">${curr}${p.price}</div>
+          `;
+          productsListGrid.appendChild(card);
+        });
+      });
+    }
+
+    // Render Cart
+    function renderCart() {
+      const curr = settings.curr || '₹';
+      cartItems.innerHTML = '';
+      let total = 0;
+      db.collection('products').get().then(snapshot => {
+        snapshot.forEach(doc => {
+          const p = doc.data();
+          const ci = cart.find(x => x.id === doc.id);
+          if (ci) {
+            total += p.price * ci.qty;
+            const title = currentLang === 'en' ? p.title : p.title_ur || p.title;
+            const line = document.createElement('div');
+            line.className = 'cart-line';
+            line.innerHTML = `
+              <img src="${p.image}" alt="${title}">
+              <div style="flex:1">
+                <div class="title" style="margin:0">${title}</div>
+                <div class="muted">${curr}${p.price} × ${ci.qty} = ${curr}${p.price * ci.qty}</div>
+                <div class="qty">
+                  <button class="btn icon" onclick="decrease('${doc.id}')">−</button>
+                  <div>${ci.qty}</div>
+                  <button class="btn icon" onclick="increase('${doc.id}')">+</button>
+                  <button class="btn icon" style="margin-left:auto" onclick="removeItem('${doc.id}')">${currentLang === 'en' ? 'Remove' : 'ہٹائیں'}</button>
+                </div>
+              </div>
+            `;
+            cartItems.appendChild(line);
+          }
+        });
+        cartTotal.textContent = curr + total;
+        cartCount.textContent = cart.reduce((a, b) => a + b.qty, 0);
+        document.getElementById('order_details').value = cart.map(ci => {
+          const p = snapshot.docs.find(doc => doc.id === ci.id).data();
+          return `${p.title} x ${ci.qty} = ${curr}${p.price * ci.qty}`;
+        }).join('\n');
+        document.getElementById('order_total').value = curr + total;
+        codNote.style.display = settings.cod !== 'off' ? 'block' : 'none';
+      });
+    }
+
+    // Render Orders
+    function renderOrders() {
+      // Placeholder for orders rendering
+    }
+
+    // Cart Actions
+    window.addToCart = function(id) {
+      const it = cart.find(x => x.id === id);
+      if (it) it.qty++; else cart.push({ id, qty: 1 });
+      persistCart(); renderCart();
+    };
+    window.increase = function(id) { const it = cart.find(x => x.id === id); if (it) { it.qty++; persistCart(); renderCart(); } };
+    window.decrease = function(id) { const it = cart.find(x => x.id === id); if (it) { it.qty--; if (it.qty <= 0) cart = cart.filter(x => x.id !== id); persistCart(); renderCart(); } };
+    window.removeItem = function(id) { cart = cart.filter(x => x.id !== id); persistCart(); renderCart(); };
+    function clearCart() { if (confirm(currentLang === 'en' ? 'Clear cart?' : 'کارٹ خالی کریں؟')) { cart = []; persistCart(); renderCart(); } }
+    function persistCart() { localStorage.setItem('cart', JSON.stringify(cart)); }
+
+    // Order Form Submission
+    document.getElementById('orderForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      if (!cart.length) { alert(currentLang === 'en' ? 'Your cart is empty.' : 'آپ کا کارٹ خالی ہے۔'); return; }
+      try {
+        await emailjs.sendForm(EMAILJS_SERVICE, EMAILJS_TEMPLATE, this);
+        alert(currentLang === 'en' ? 'Order placed! Check your email.' : 'آرڈر ہو گیا! ای میل چیک کریں۔');
+        orders.push({ time: Date.now(), email: this.user_email.value, phone: this.user_phone.value, address: this.user_address.value, details: document.getElementById('order_details').value, total: (document.getElementById('order_total').value || '').replace(/[^\d.]/g, '') || 0 });
+        localStorage.setItem('orders', JSON.stringify(orders));
+        this.reset();
+        cart = []; persistCart(); renderCart();
+      } catch (err) {
+        console.error(err);
+        alert(currentLang === 'en' ? 'Failed to place order. Check EmailJS.' : 'آرڈر نہیں ہو سکا۔ EmailJS چیک کریں۔');
+      }
+    });
+
+    // Settings
+    function saveStoreSettings() {
+      settings = {
+        brand: document.getElementById('setBrand').value.trim() || 'Sharif.com',
+        curr: document.getElementById('setCurr').value || '₹',
+        lang: document.getElementById('setLang').value || 'en',
+        cod: document.getElementById('setCOD').value,
+        notice: document.getElementById('setNotice').value
+      };
+      localStorage.setItem('settings', JSON.stringify(settings));
+      applySettings();
+      alert(currentLang === 'en' ? 'Store settings saved.' : 'اسٹور سیٹنگز محفوظ ہو گئیں۔');
+    }
+    function resetStoreSettings() {
+      localStorage.removeItem('settings');
+      location.reload();
+    }
+    function saveCustomerSettings() {
+      customers = {
+        name: document.getElementById('custName').value,
+        email: document.getElementById('custEmail').value,
+        phone: document.getElementById('custPhone').value,
+        address: document.getElementById('custAddress').value
+      };
+      localStorage.setItem('customers', JSON.stringify(customers));
+      alert(currentLang === 'en' ? 'Customer details saved.' : 'کسٹمر کی تفصیلات محفوظ ہو گئیں۔');
+    }
+    function resetCustomerSettings() {
+      document.getElementById('custName').value = '';
+      document.getElementById('custEmail').value = '';
+      document.getElementById('custPhone').value = '';
+      document.getElementById('custAddress').value = '';
+      localStorage.removeItem('customers');
+      alert(currentLang === 'en' ? 'Customer details reset.' : 'کسٹمر کی تفصیلات ری سیٹ ہو گئیں۔');
+    }
+    function applySettings() {
+      brandLogo.textContent = settings.brand || 'Sharif.com';
+      brandFooter.textContent = settings.brand || 'Sharif.com';
+      currentLang = settings.lang || 'en';
+      if (currentLang === 'ur') document.body.style.direction = 'rtl'; else document.body.style.direction = 'ltr';
+      renderProducts(); renderCart();
+    }
+    function switchLang(lang) {
+      settings.lang = lang;
+      localStorage.setItem('settings', JSON.stringify(settings));
+      applySettings();
+    }
+
+    // Admin - Add Product
+    function triggerFileInput() {
+      document.getElementById('imageInput').click();
+    }
+    document.getElementById('imageInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const preview = document.getElementById('imagePreview');
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = 'block';
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', 'Sharif');
+        formData.append('cloud_name', 'dwf3tkkrg');
+
+        fetch('https://api.cloudinary.com/v1_1/dwf3tkkrg/image/upload', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.secure_url) {
+            document.getElementById('adminImage').value = data.secure_url;
+            console.log('Image uploaded:', data.secure_url);
+          } else {
+            alert('Image upload failed. Check console.');
+            console.error('Upload error:', data);
+          }
+        })
+        .catch(error => {
+          alert('Error uploading image. Check console.');
+          console.error('Error:', error);
+        });
+      }
+    });
+    function addProduct() {
+      const title = document.getElementById('adminTitle').value;
+      const brand = document.getElementById('adminBrand').value;
+      const description = document.getElementById('adminDescription').value;
+      const price = parseFloat(document.getElementById('adminPrice').value);
+      const image = document.getElementById('adminImage').value;
+
+      if (!title || !brand || !description || !price || !image) {
+        alert('Please fill all fields and upload an image!');
+        return;
+      }
+
+      const product = {
+        title: title,
+        brand: brand,
+        description: description,
+        price: price,
+        image: image,
+        category: 'All', // Default category
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      db.collection('products').add(product).then(() => {
+        alert('Product added successfully!');
+        document.getElementById('adminTitle').value = '';
+        document.getElementById('adminBrand').value = '';
+        document.getElementById('adminDescription').value = '';
+        document.getElementById('adminPrice').value = '';
+        document.getElementById('adminImage').value = '';
+        document.getElementById('imagePreview').style.display = 'none';
+        renderProductsList();
+      }).catch(error => {
+        console.error('Error adding product:', error);
+        alert('Failed to add product.');
+      });
+    }
+
+    // Init
+    (function init() {
+      initCategories();
+      applySettings();
+      renderProducts();
+      renderCart();
+      renderProductsList();
+      showPage('home');
+    })();
+  </script>
+</body>
+</html>
