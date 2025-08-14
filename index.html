@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sharif.com — Ecommerce</title>
   <style>
-    :root { --brand: #007bff; --bg: #f5f6f8; --text: #222; --card: #fff; }
+    :root { --brand: #007bff; --bg: #f5f6f8; --text: #222; --card: #fff; --danger: #dc3545; }
     * { box-sizing: border-box; }
     body { margin: 0; background: var(--bg); color: var(--text); font-family: Arial, sans-serif; }
     header { background: var(--brand); color: #fff; padding: 10px; position: sticky; top: 0; }
@@ -13,6 +13,7 @@
     .logo { font-weight: bold; font-size: 20px; }
     .btn { background: #fff; color: var(--brand); border: 0; border-radius: 5px; padding: 8px 15px; cursor: pointer; }
     .btn.ghost { background: transparent; color: #fff; border: 1px solid #fff; }
+    .btn.danger { background: var(--danger); color: #fff; }
     .wrap { padding: 15px; max-width: 1200px; margin: 0 auto; }
     .tabs { display: flex; gap: 10px; }
     .tab { padding: 8px; border-radius: 5px; background: #ddd; cursor: pointer; }
@@ -69,7 +70,10 @@
         <input type="file" id="imageInput" accept="image/*" />
         <img id="imagePreview" src="" alt="Preview" style="max-width: 200px; display: none; margin-top: 10px;" />
       </div>
-      <button onclick="addProduct()">Add Product</button>
+      <button id="adminAddProductBtn">Add Product</button>
+
+      <h2>Product List (Manage Products)</h2>
+      <div class="grid" id="adminProductList"></div>
 
       <h2>Address Book</h2>
       <div class="setgrid">
@@ -80,6 +84,20 @@
       </div>
       <button onclick="saveAddress()">Save Address</button>
       <button onclick="resetAddress()">Reset</button>
+
+      <h2>Create Seller Account</h2>
+      <div class="setgrid">
+        <input type="text" placeholder="Name" id="sellerName" />
+        <input type="email" placeholder="Email" id="sellerEmail" />
+        <input type="tel" placeholder="Phone" id="sellerPhone" />
+        <textarea placeholder="Full Address" id="sellerAddress"></textarea>
+        <input type="text" placeholder="Bank Account Details" id="sellerBank" />
+        <input type="text" placeholder="NID or Passport Number" id="sellerID" />
+      </div>
+      <button id="createSellerBtn">Create Seller Account</button>
+
+      <h2>Pending Seller Accounts</h2>
+      <div class="grid" id="pendingSellers"></div>
     </section>
   </main>
 
@@ -110,11 +128,17 @@
     // EmailJS Config
     emailjs.init('DapdU3gPmJ8ymUdD2'); // Your public key
 
+    // Admin Authentication
+    const ADMIN_PASSWORD = '@122@44@good'; // Change this to your secret password
+    let isAdmin = localStorage.getItem('isAdmin') === 'true';
+
     // State
     let products = JSON.parse(localStorage.getItem('products')) || [];
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     let settings = JSON.parse(localStorage.getItem('settings')) || { storeName: 'Sharif.com', currency: '₹', notice: '' };
     let addresses = JSON.parse(localStorage.getItem('addresses')) || [];
+    let pendingSellers = JSON.parse(localStorage.getItem('pendingSellers')) || [];
+    let approvedSellers = JSON.parse(localStorage.getItem('approvedSellers')) || [];
 
     // DOM Elements
     const pages = document.querySelectorAll('.page');
@@ -127,6 +151,26 @@
     const storeName = document.getElementById('storeName');
     const orderForm = document.getElementById('orderForm');
     const orderFormDetails = document.getElementById('orderFormDetails');
+    const adminAddProductBtn = document.getElementById('adminAddProductBtn');
+    const adminProductList = document.getElementById('adminProductList');
+    const createSellerBtn = document.getElementById('createSellerBtn');
+    const pendingSellersDiv = document.getElementById('pendingSellers');
+
+    // Admin Login Prompt
+    if (!isAdmin) {
+      const password = prompt('Enter Admin Password to access Settings:');
+      if (password === ADMIN_PASSWORD) {
+        isAdmin = true;
+        localStorage.setItem('isAdmin', 'true');
+        adminAddProductBtn.disabled = false;
+      } else {
+        alert('Incorrect password! Redirecting to Home.');
+        showPage('home');
+        adminAddProductBtn.disabled = true;
+      }
+    } else {
+      adminAddProductBtn.disabled = false;
+    }
 
     // Navigation
     navTabs.addEventListener('click', (e) => {
@@ -141,22 +185,42 @@
     // Render Products on Home Page
     function renderProducts() {
       productsGrid.innerHTML = '';
-      products.forEach(p => {
+      products.forEach((p, index) => {
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
           <img src="${p.image}" alt="${p.title}">
           <div class="title">${p.title}</div>
           <div class="price">${settings.currency}${p.price}</div>
-          <button onclick="addToCart(${products.indexOf(p)})">Add to Cart</button>
-          <button onclick="showOrderForm(${products.indexOf(p)})">Order Now</button>
+          <button onclick="addToCart(${index})">Add to Cart</button>
+          <button onclick="showOrderForm(${index})">Order Now</button>
         `;
         productsGrid.appendChild(card);
       });
     }
 
-    // Add Product from Settings
+    // Render Admin Product List with Delete Option
+    function renderAdminProductList() {
+      adminProductList.innerHTML = '';
+      products.forEach((p, index) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <img src="${p.image}" alt="${p.title}">
+          <div class="title">${p.title}</div>
+          <div class="price">${settings.currency}${p.price}</div>
+          <button class="btn danger" onclick="deleteProduct(${index})">Delete</button>
+        `;
+        adminProductList.appendChild(card);
+      });
+    }
+
+    // Add Product from Settings (Admin Only)
     function addProduct() {
+      if (!isAdmin) {
+        alert('You are not authorized to add products!');
+        return;
+      }
       const title = document.getElementById('adminTitle').value;
       const brand = document.getElementById('adminBrand').value;
       const description = document.getElementById('adminDescription').value;
@@ -173,6 +237,7 @@
           imagePreview.src = image;
           imagePreview.style.display = 'block';
           renderProducts(); // Update Home Page
+          renderAdminProductList(); // Update Admin Product List
           alert('Product added to Home Page!');
           clearAdminForm();
         };
@@ -181,10 +246,26 @@
         products.push({ title, brand, description, price, image: 'https://via.placeholder.com/150' });
         localStorage.setItem('products', JSON.stringify(products));
         renderProducts(); // Update Home Page
+        renderAdminProductList(); // Update Admin Product List
         alert('Product added to Home Page! (No image)');
         clearAdminForm();
       } else {
         alert('Please fill all fields!');
+      }
+    }
+
+    // Delete Product
+    function deleteProduct(index) {
+      if (!isAdmin) {
+        alert('You are not authorized to delete products!');
+        return;
+      }
+      if (confirm('Are you sure you want to delete this product?')) {
+        products.splice(index, 1);
+        localStorage.setItem('products', JSON.stringify(products));
+        renderProducts(); // Update Home Page
+        renderAdminProductList(); // Update Admin Product List
+        alert('Product deleted!');
       }
     }
 
@@ -347,10 +428,111 @@
       alert('Address reset!');
     }
 
+    // Create Seller Account
+    function createSellerAccount() {
+      const name = document.getElementById('sellerName').value;
+      const email = document.getElementById('sellerEmail').value;
+      const phone = document.getElementById('sellerPhone').value;
+      const address = document.getElementById('sellerAddress').value;
+      const bank = document.getElementById('sellerBank').value;
+      const id = document.getElementById('sellerID').value;
+
+      if (name && email && phone && address && bank && id) {
+        const sellerData = { name, email, phone, address, bank, id, time: new Date().toLocaleString(), status: 'pending' };
+        pendingSellers.push(sellerData);
+        localStorage.setItem('pendingSellers', JSON.stringify(pendingSellers));
+
+        emailjs.send('service_hwvi11g', 'template_kp1zovr', {
+          to_email: 'your-email@example.com', // Replace with your email
+          name: name,
+          email: email,
+          phone: phone,
+          address: address,
+          bank: bank,
+          id: id,
+          message: `New seller account request at ${sellerData.time}`
+        }).then(() => {
+          alert('Seller account request sent to admin!');
+          renderPendingSellers();
+          clearSellerForm();
+        }, (err) => {
+          console.error('Email failed:', err);
+          alert('Request saved, but email failed. Check console.');
+        });
+      } else {
+        alert('Please fill all fields!');
+      }
+    }
+
+    // Render Pending Sellers
+    function renderPendingSellers() {
+      pendingSellersDiv.innerHTML = '';
+      pendingSellers.forEach((seller, index) => {
+        if (seller.status === 'pending') {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <div class="title">${seller.name}</div>
+            <div class="muted">Email: ${seller.email}</div>
+            <div class="muted">Phone: ${seller.phone}</div>
+            <div class="muted">Address: ${seller.address}</div>
+            <div class="muted">Bank: ${seller.bank}</div>
+            <div class="muted">ID: ${seller.id}</div>
+            <div class="row">
+              <button class="btn" onclick="approveSeller(${index})">Approve</button>
+              <button class="btn danger" onclick="rejectSeller(${index})">Reject</button>
+            </div>
+          `;
+          pendingSellersDiv.appendChild(card);
+        }
+      });
+    }
+
+    // Approve Seller
+    function approveSeller(index) {
+      if (!isAdmin) {
+        alert('You are not authorized to approve sellers!');
+        return;
+      }
+      const seller = pendingSellers[index];
+      seller.status = 'approved';
+      approvedSellers.push(seller);
+      pendingSellers.splice(index, 1);
+      localStorage.setItem('pendingSellers', JSON.stringify(pendingSellers));
+      localStorage.setItem('approvedSellers', JSON.stringify(approvedSellers));
+      renderPendingSellers();
+      alert('Seller approved!');
+    }
+
+    // Reject Seller
+    function rejectSeller(index) {
+      if (!isAdmin) {
+        alert('You are not authorized to reject sellers!');
+        return;
+      }
+      pendingSellers.splice(index, 1);
+      localStorage.setItem('pendingSellers', JSON.stringify(pendingSellers));
+      renderPendingSellers();
+      alert('Seller rejected!');
+    }
+
+    function clearSellerForm() {
+      document.getElementById('sellerName').value = '';
+      document.getElementById('sellerEmail').value = '';
+      document.getElementById('sellerPhone').value = '';
+      document.getElementById('sellerAddress').value = '';
+      document.getElementById('sellerBank').value = '';
+      document.getElementById('sellerID').value = '';
+    }
+
     // Init
     (function() {
       renderProducts(); // Load products on Home Page by default
+      renderAdminProductList(); // Load admin product list
+      renderPendingSellers(); // Load pending sellers
       storeName.textContent = settings.storeName;
+      adminAddProductBtn.addEventListener('click', addProduct);
+      createSellerBtn.addEventListener('click', createSellerAccount);
     })();
   </script>
 </body>
