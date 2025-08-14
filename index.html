@@ -552,27 +552,65 @@
       });
     }
 
+    <script>
     // Product Management
-    function renderProducts() {
-      const productsGrid = document.getElementById('productsGrid');
-      productsGrid.innerHTML = '';
-      
-      products.forEach((product, index) => {
-        const productCard = document.createElement('div');
-        productCard.className = 'card';
-        productCard.innerHTML = `
-          <img src="${product.image || 'https://via.placeholder.com/300'}" alt="${product.title}">
-          <div class="title">${product.title}</div>
-          <div class="description">${product.description || ''}</div>
-          <div class="price">${settings.currency}${product.price.toLocaleString()}</div>
-          <div class="product-actions">
-            <button class="btn" onclick="addToCart(${index})">Add to Cart</button>
-            <button class="btn success" onclick="showOrderForm(${index})">Buy Now</button>
-          </div>
-        `;
-        productsGrid.appendChild(productCard);
-      });
+    function addProduct() {
+      const title = document.getElementById('adminTitle').value;
+      const brand = document.getElementById('adminBrand').value;
+      const description = document.getElementById('adminDescription').value;
+      const price = parseFloat(document.getElementById('adminPrice').value);
+      const file = imageInput.files[0];
+
+      if (!title || !price) {
+        alert(currentLanguage === 'ur' ? 'براہ کرم کم از کم پروڈکٹ کا نام اور قیمت درج کریں' : 
+              currentLanguage === 'mm' ? 'ကျေးဇူးပြု၍အနည်းဆုံးထုတ်ကုန်အမည်နှင့်စျေးနှုန်းကိုဖြည့်ပါ' : 
+              'Please enter at least product title and price');
+        return;
+      }
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const newProduct = {
+            title,
+            brand,
+            description,
+            price,
+            image: e.target.result
+          };
+          products.push(newProduct);
+          saveProducts();
+          renderProducts(); // یہ لائن شامل کریں
+          renderAdminProductList(); // یہ لائن شامل کریں
+          clearAdminForm();
+          alert(currentLanguage === 'ur' ? 'پروڈکٹ کامیابی سے شامل کی گئی!' : 
+                currentLanguage === 'mm' ? 'ထုတ်ကုန်အောင်မြင်စွာထည့်ပြီးပါပြီ!' : 
+                'Product added successfully!');
+        };
+        reader.readAsDataURL(file);
+      } else {
+        const newProduct = {
+          title,
+          brand,
+          description,
+          price,
+          image: 'https://via.placeholder.com/300'
+        };
+        products.push(newProduct);
+        saveProducts();
+        renderProducts(); // یہ لائن شامل کریں
+        renderAdminProductList(); // یہ لائن شامل کریں
+        clearAdminForm();
+        alert(currentLanguage === 'ur' ? 'پروڈکٹ کامیابی سے شامل کی گئی (بغیر تصویر کے)!' : 
+              currentLanguage === 'mm' ? 'ထုတ်ကုန်အောင်မြင်စွာထည့်ပြီးပါပြီ (ဓာတ်ပုံမပါဘဲ)!' : 
+              'Product added successfully (without image)!');
+      }
     }
+
+    function saveProducts() {
+      localStorage.setItem('products', JSON.stringify(products));
+    }
+</script>
 
     // Cart Management
     function addToCart(productIndex) {
