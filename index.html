@@ -24,6 +24,8 @@
     .title { font-weight: bold; margin: 5px 0; }
     .price { font-size: 16px; font-weight: bold; }
     #cartPanel { display: none; position: fixed; top: 0; right: 0; width: 300px; height: 100%; background: #fff; padding: 15px; }
+    #orderForm { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+    #orderFormContent { background: #fff; padding: 20px; margin: 50px auto; max-width: 400px; border-radius: 5px; }
     .setgrid { display: grid; grid-template-columns: 1fr; gap: 10px; }
     .setgrid input, .setgrid textarea { width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ddd; }
   </style>
@@ -85,6 +87,23 @@
     <h3>Cart</h3>
     <div id="cartItems"></div>
     <button onclick="clearCart()">Clear Cart</button>
+    <button onclick="showOrderForm()">Order Now</button>
+  </div>
+
+  <div id="orderForm">
+    <div id="orderFormContent">
+      <h3>Place Your Order</h3>
+      <form id="orderFormDetails">
+        <input type="text" placeholder="Your Name" name="name" required />
+        <input type="email" placeholder="Your Email" name="email" required />
+        <input type="tel" placeholder="Your Phone" name="phone" required />
+        <textarea placeholder="Full Address" name="address" required></textarea>
+        <input type="hidden" name="order_details" id="orderDetails" />
+        <input type="hidden" name="order_total" id="orderTotal" />
+        <button type="submit">Submit Order</button>
+      </form>
+      <button onclick="hideOrderForm()">Cancel</button>
+    </div>
   </div>
 
   <script>
@@ -106,6 +125,8 @@
     const imageInput = document.getElementById('imageInput');
     const imagePreview = document.getElementById('imagePreview');
     const storeName = document.getElementById('storeName');
+    const orderForm = document.getElementById('orderForm');
+    const orderFormDetails = document.getElementById('orderFormDetails');
 
     // Navigation
     navTabs.addEventListener('click', (e) => {
@@ -117,7 +138,7 @@
       }
     });
 
-    // Render Products
+    // Render Products on Home Page
     function renderProducts() {
       productsGrid.innerHTML = '';
       products.forEach(p => {
@@ -128,12 +149,13 @@
           <div class="title">${p.title}</div>
           <div class="price">${settings.currency}${p.price}</div>
           <button onclick="addToCart(${products.indexOf(p)})">Add to Cart</button>
+          <button onclick="showOrderForm(${products.indexOf(p)})">Order Now</button>
         `;
         productsGrid.appendChild(card);
       });
     }
 
-    // Add Product
+    // Add Product from Settings
     function addProduct() {
       const title = document.getElementById('adminTitle').value;
       const brand = document.getElementById('adminBrand').value;
@@ -150,16 +172,16 @@
           localStorage.setItem('products', JSON.stringify(products));
           imagePreview.src = image;
           imagePreview.style.display = 'block';
-          renderProducts();
-          alert('Product added!');
+          renderProducts(); // Update Home Page
+          alert('Product added to Home Page!');
           clearAdminForm();
         };
         reader.readAsDataURL(file);
       } else if (title && brand && description && price) {
         products.push({ title, brand, description, price, image: 'https://via.placeholder.com/150' });
         localStorage.setItem('products', JSON.stringify(products));
-        renderProducts();
-        alert('Product added! (No image)');
+        renderProducts(); // Update Home Page
+        alert('Product added to Home Page! (No image)');
         clearAdminForm();
       } else {
         alert('Please fill all fields!');
@@ -207,10 +229,65 @@
       });
       document.getElementById('cartTotal')?.remove();
       cartItems.insertAdjacentHTML('afterend', `<div id="cartTotal">Total: ${settings.currency}${total}</div>`);
+      document.getElementById('orderDetails').value = cart.map(item => `${products[item.id].title} x ${item.qty} = ${settings.currency}${products[item.id].price * item.qty}`).join('\n');
+      document.getElementById('orderTotal').value = `${settings.currency}${total}`;
     }
     function toggleCart() {
       cartPanel.style.display = cartPanel.style.display === 'block' ? 'none' : 'block';
     }
+
+    // Order Form Functions
+    function showOrderForm(id) {
+      orderForm.style.display = 'block';
+      if (id !== undefined) {
+        const p = products[id];
+        document.getElementById('orderDetails').value = `${p.title} = ${settings.currency}${p.price}`;
+        document.getElementById('orderTotal').value = `${settings.currency}${p.price}`;
+      } else {
+        renderCart();
+      }
+    }
+    function hideOrderForm() {
+      orderForm.style.display = 'none';
+      orderFormDetails.reset();
+    }
+
+    // Submit Order
+    orderFormDetails.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = this.name.value;
+      const email = this.email.value;
+      const phone = this.phone.value;
+      const address = this.address.value;
+      const orderDetails = document.getElementById('orderDetails').value;
+      const orderTotal = document.getElementById('orderTotal').value;
+
+      if (name && email && phone && address && orderDetails && orderTotal) {
+        emailjs.send('service_hwvi11g', 'template_kp1zovr', {
+          to_email: 'your-email@example.com', // Replace with your email
+          name: name,
+          email: email,
+          phone: phone,
+          address: address,
+          order_details: orderDetails,
+          order_total: orderTotal,
+          message: `New order placed at ${new Date().toLocaleString()}`
+        }).then(() => {
+          alert('Order placed and sent to your email!');
+          hideOrderForm();
+          if (cart.length > 0) {
+            cart = [];
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
+          }
+        }, (err) => {
+          console.error('Email failed:', err);
+          alert('Order placed, but email failed. Check console.');
+        });
+      } else {
+        alert('Please fill all fields!');
+      }
+    });
 
     // Store Settings
     function saveStoreSettings() {
@@ -239,7 +316,6 @@
         addresses.push(addressData);
         localStorage.setItem('addresses', JSON.stringify(addresses));
 
-        // Send email via EmailJS
         emailjs.send('service_hwvi11g', 'template_kp1zovr', {
           to_email: 'your-email@example.com', // Replace with your email
           name: name,
@@ -273,7 +349,7 @@
 
     // Init
     (function() {
-      renderProducts();
+      renderProducts(); // Load products on Home Page by default
       storeName.textContent = settings.storeName;
     })();
   </script>
