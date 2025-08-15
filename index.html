@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sharif.com — Ecommerce</title>
+  <style>
+    :root {
+      --brand: #007bff;
+      --bg: #f5f6f8;
+      --text: #222;
+      --card: #fff;
+      --danger: #dc3545;
+      --success: #28a745;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    header {
+      background: var(--brand);
+      color: #fff;
+      padding: 15px;
+      position: sticky;
+      top: 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .logo {
+      font-weight: bold;
+      font-size: 22px;
+    }
+    .language-selector {
+      display: flex;
+      gap: 10px;
+    }
+    .lang-btn {
+      background: transparent;
+      color: white;
+      border: 1px solid white;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .lang-btn.active {
+      background: white;
+      color: var(--brand);
+    }
+    .btn {
+      background: #fff;
+      color: var(--brand);
+      border: 0;
+      border-radius: 5px;
+      padding: 8px 15px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+    .btn:hover {
+      opacity: 0.9;
+    }
+    .btn.ghost {
+      background: transparent;
+      color: #fff;
+      border: 1px solid #fff;
+    }
+    .btn.danger {
+      background: var(--danger);
+      color: #fff;
+    }
+    .btn.success {
+      background: var(--success);
+      color: #fff;
+    }
+    .wrap {
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      .nav {
+        flex-direction: row;
+        align-items: center;
+      }
+    }
+    .card {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: contain;
+      margin-bottom: 10px;
+    }
+    .title {
+      font-weight: bold;
+      margin: 10px 0;
+      font-size: 18px;
+    }
+    .price {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--brand);
+      margin: 10px 0;
+    }
+    .description {
+      color: #666;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+    #cartPanel {
+      display: none;
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 350px;
+      height: 100%;
+      background: #fff;
+      padding: 20px;
+      box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+      overflow-y: auto;
+      z-index: 1000;
+    }
+    #orderForm {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+    #orderFormContent {
+      background: #fff;
+      padding: 30px;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 10px;
+      position: relative;
+    }
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--danger);
+      color: white;
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .setgrid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 15px;
+      margin: 20px 0;
+    }
+    .setgrid input, .setgrid textarea, .setgrid select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      font-family: inherit;
+    }
+    .setgrid textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .step {
+      display: none;
+    }
+    .step.active {
+      display: block;
+    }
+    .step-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    .hidden {
+      display: none;
+    }
+    .seller-stage {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eee;
+    }
+    .seller-stage:last-child {
+      border-bottom: none;
+    }
+    #passwordPrompt {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+    }
+    #passwordPromptContent {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+    }
+    .product-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .product-actions button {
+      flex: 1;
+    }
+    body[dir="rtl"] {
+      text-align: right;
+    }
+    body[dir="ltr"] {
+      text-align: left;
+    }
+    .sidebar {
+      display: none;
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 250px;
+      height: 100%;
+      background: white;
+      border-radius: 5px 0 0 5px;
+      box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+      z-index: 1000;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .sidebar.active {
+      display: block;
+    }
+    .sidebar button {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      text-align: left;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 16px;
+      border-bottom: 1px solid #eee;
+    }
+    .sidebar button:hover {
+      background: #f5f5f5;
+    }
+    .menu-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 5px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    // Initialize EmailJS
+    (function() {
+      emailjs.init('DapdU3gPmJ8ymUdD2');
+    })();
+
+    // Admin Authentication
+    const ADMIN_PASSWORD = '@122@44@good';
+    let isAdmin = localStorage.getItem('isAdmin') === 'true';
+    let currentLanguage = 'en';
+    let currentAction = '';
+
+    // State Management
+    let initialProducts = [
+      {
+        title: "Apple Smart Watch Series 10",
+        description: "Thinner case and bigger screen with advanced health features.",
+        price: 299,
+        image: "https://www.apple.com/v/apple-watch-series-10/e/images/overview/design/design_front__b3ubcf6k7n0m_large.jpg"
+      },
+      {
+        title: "Nanoleaf Gray LED Smart Bulb",
+        description: "Color changing smart LED bulb with Matter support for home automation.",
+        price: 20,
+        image: "https://nanoleaf.me/wp-content/uploads/2023/10/essentials-bulb-1pack.png"
+      },
+      {
+        title: "Shure MV88 Microphone",
+        description: "Digital stereo condenser microphone for high-quality audio recording on iOS devices.",
+        price: 149,
+        image: "https://www.shure.com/damfiles/large/global/products/mv88/mv88-front.jpg"
+      },
+      {
+        title: "Apple iPhone 16 Mobile",
+        description: "Powerful smartphone with 48MP camera and Apple Intelligence features.",
+        price: 799,
+        image: "https://www.apple.com/newsroom/images/2024/09/apple-introduces-iphone-16-and-iphone-16-plus/article/09092024-apple-introduces-iphone-16-and-iphone-16-plus-hero-240909_big.jpg.large.jpg"
+      },
+      {
+        title: "Wireless Bluetooth Earphones",
+        description: "High-quality sound with noise cancellation and long battery life.",
+        price: 50,
+        image: "https://via.placeholder.com/300?text=Earphones"
+      }
+    ];
+    let products = JSON.parse(localStorage.getItem('products')) || initialProducts;
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let settings = JSON.parse(localStorage.getItem('settings')) || { storeName: 'Sharif.com', currency: '₹', notice: '' };
+    let addresses = JSON.parse(localStorage.getItem('addresses')) || [];
+    let pendingSellers = JSON.parse(localStorage.getItem('pendingSellers')) || [];
+    let approvedSellers = JSON.parse(localStorage.getItem('approvedSellers')) || [];
+
+    // Initialize Page
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProducts();
+      renderAdminProducts();
+      updateStoreName();
+      setupLanguageButtons();
+      setupImagePreview();
+      renderPendingSellers();
+      if (!isAdmin) {
+        document.getElementById('pageSettings').style.display = 'none';
+      }
+    });
+
+    // Image Preview and Validation
+    function setupImagePreview() {
+      document.getElementById('imageInput').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          if (file.size > 2 * 1024 * 1024) {
+            alert(getTranslatedMessage('Image size should be less than 2MB'));
+            return;
+          }
+          if (!['image/jpeg', 'image/png'].includes(file.type)) {
+            alert(getTranslatedMessage('Only JPG and PNG images are supported'));
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = () => {
+            document.getElementById('imagePreview').src = reader.result;
+            document.getElementById('imagePreview').style.display = 'block';
+          };
+          reader.onerror = () => {
+            alert(getTranslatedMessage('Failed to read image file'));
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    // Add Product
+    function addProduct() {
+      try {
+        const title = document.getElementById('adminTitle').value.trim();
+        const brand = document.getElementById('adminBrand').value.trim();
+        const description = document.getElementById('adminDescription').value.trim();
+        const price = parseFloat(document.getElementById('adminPrice').value);
+        const image = document.getElementById('imagePreview').src;
+
+        if (!title || !brand || !description || isNaN(price) || price <= 0 || !image || image === '') {
+          throw new Error(getTranslatedMessage('Please fill all required fields and enter a valid price'));
+        }
+
+        const newProduct = { title: `${brand} ${title}`, description, price, image };
+        products.push(newProduct);
+        localStorage.setItem('products', JSON.stringify(products));
+        renderProducts();
+        renderAdminProducts();
+
+        // Clear form
+        document.getElementById('adminTitle').value = '';
+        document.getElementById('adminBrand').value = '';
+        document.getElementById('adminDescription').value = '';
+        document.getElementById('adminPrice').value = '';
+        document.getElementById('imageInput').value = '';
+        document.getElementById('imagePreview').src = '';
+        document.getElementById('imagePreview').style.display = 'none';
+
+        alert(getTranslatedMessage('Product added successfully!'));
+      } catch (error) {
+        console.error('Error adding product:', error);
+        alert(error.message);
+      }
+    }
+
+    // Render Admin Products
+    function renderAdminProducts() {
+      const adminProductList = document.getElementById('adminProductList');
+      adminProductList.innerHTML = '';
+      
+      products.forEach((product, index) => {
+        const productCard = document.createElement('div');
+        productCard.className = 'card';
+        productCard.innerHTML = `
+          <img src="${product.image || 'https://via.placeholder.com/300'}" alt="${product.title}">
+          <div class="title">${product.title}</div>
+          <div class="description">${product.description || ''}</div>
+          <div class="price">${settings.currency}${product.price.toLocaleString()}</div>
+          <div class="product-actions">
+            <button class="btn danger" onclick="deleteProduct(${index})">${getTranslatedMessage('Delete')}</button>
+          </div>
+        `;
+        adminProductList.appendChild(productCard);
+      });
+    }
+
+    // Delete Product
+    function deleteProduct(index) {
+      if (confirm(getTranslatedMessage('Are you sure you want to delete this product?'))) {
+        products.splice(index, 1);
+        localStorage.setItem('products', JSON.stringify(products));
+        renderProducts();
+        renderAdminProducts();
+      }
+    }
+
+    // Toggle Sidebar
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('active');
+    }
+
+    // Show Specific Settings Section
+    function showSettingsSection(sectionId) {
+      document.querySelectorAll('.settings-section').forEach(section => {
+        section.style.display = 'none';
+      });
+      document.getElementById(sectionId).style.display = 'block';
+      toggleSidebar();
+      if (sectionId === 'settingsSectionAdmin' && !isAdmin) {
+        showPasswordPrompt('accessSettings');
+      }
+    }
+
+    // Language Switching
+    function setupLanguageButtons() {
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentLanguage = btn.dataset.lang;
+          document.body.dir = currentLanguage === 'ur' ? 'rtl' : 'ltr';
+          updateLanguage();
+        });
+      });
+    }
+
+    // Translation Helper
+    function getTranslatedMessage(enMessage) {
+      const translations = {
+        'Please fill all required fields and enter a valid price': {
+          ur: 'براہ کرم تمام ضروری فیلڈز کو پُر کریں اور درست پرائس داخل کریں',
+          mm: 'ကျေးဇူးပြု၍ လိုအပ်သော အကွက်များအားလုံးကို ဖြည့်ပါ နှင့် မှန်ကန်သော စျေးနှုန်း ထည့်ပါ',
+          en: 'Please fill all required fields and enter a valid price'
+        },
+        'Product added successfully!': {
+          ur: 'پروڈکٹ کامیابی سے شامل کی گئی!',
+          mm: 'ထုတ်ကုန်ကို အောင်မြင်စွာ ထည့်ပြီးပါပြီ!',
+          en: 'Product added successfully!'
+        },
+        'Delete': {
+          ur: 'حذف کریں',
+          mm: 'ဖျက်မည်',
+          en: 'Delete'
+        },
+        'Are you sure you want to delete this product?': {
+          ur: 'کیا آپ واقعی اس پروڈکٹ کو حذف کرنا چاہتے ہیں؟',
+          mm: 'ဤထုတ်ကုန်ကိုဖျက်ရန်သေချာပါသလား။',
+          en: 'Are you sure you want to delete this product?'
+        },
+        'Image size should be less than 2MB': {
+          ur: 'تصویر کا سائز 2MB سے کم ہونا چاہیے',
+          mm: 'ပုံရွှင်း၏အရွယ်အစားသည် ၂မီဂါဘိုက်ထက်နည်းရမည်',
+          en: 'Image size should be less than 2MB'
+        },
+        'Only JPG and PNG images are supported': {
+          ur: 'صرف JPG اور PNG تصاویر تعاون یافتہ ہیں',
+          mm: 'JPG နှင့် PNG ပုံများသာလျှင်ထောက်ပံ့ထားသည်',
+          en: 'Only JPG and PNG images are supported'
+        },
+        'Failed to read image file': {
+          ur: 'تصویر فائل پڑھنے میں ناکامی',
+          mm: 'ပုံဖိုင်ကိုဖတ်ရန်မအောင်မြင်ပါ',
+          en: 'Failed to read image file'
+        },
+        'Please fill all required fields': {
+          ur: 'براہ کرم تمام ضروری فیلڈز کو پُر کریں',
+          mm: 'ကျေးဇူးပြု၍လိုအပ်သောအကွက်များအားလုံးကိုဖြည့်ပါ',
+          en: 'Please fill all required fields'
+        }
+      };
+      return translations[enMessage][currentLanguage] || enMessage;
+    }
+
+    // Update Language
+    function updateLanguage() {
+      document.querySelectorAll('[data-en], [data-ur], [data-mm]').forEach(el => {
+        if (el.dataset[currentLanguage]) {
+          if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+            el.placeholder = el.dataset[currentLanguage];
+          } else {
+            el.textContent = el.dataset[currentLanguage];
+          }
+        }
+      });
+    }
+
+    // Render Products
+    function renderProducts() {
+      const productsGrid = document.getElementById('productsGrid');
+      productsGrid.innerHTML = '';
+      
+      products.forEach((product, index) => {
+        const productCard = document.createElement('div');
+        productCard.className = 'card';
+        productCard.innerHTML = `
+          <img src="${product.image || 'https://via.placeholder.com/300'}" alt="${product.title}">
+          <div class="title">${product.title}</div>
+          <div class="description">${product.description || ''}</div>
+          <div class="price">${settings.currency}${product.price.toLocaleString()}</div>
+          <div class="product-actions">
+            <button class="btn" onclick="addToCart(${index})">${getTranslatedMessage('Add to Cart')}</button>
+            <button class="btn success" onclick="showOrderForm(${index})">${getTranslatedMessage('Buy Now')}</button>
+          </div>
+        `;
+        productsGrid.appendChild(productCard);
+      });
+    }
+
+    // Cart Management
+    function addToCart(productIndex) {
+      const existingItem = cart.find(item => item.productIndex === productIndex);
+      if (existingItem) {
+        existingItem.quantity++;
+      } else {
+        cart.push({ productIndex, quantity: 1 });
+      }
+      saveCart();
+      renderCart();
+      alert(getTranslatedMessage('Product added to cart!'));
+    }
+
+    function renderCart() {
+      const cartItems = document.getElementById('cartItems');
+      cartItems.innerHTML = '';
+      let total = 0;
+      
+      cart.forEach((item, index) => {
+        const product = products[item.productIndex];
+        const itemTotal = product.price * item.quantity;
+        total += itemTotal;
+        
+        const cartItem = document.createElement('div');
+        cartItem.className = 'cart-item';
+        cartItem.style.marginBottom = '10px';
+        cartItem.style.paddingBottom = '10px';
+        cartItem.style.borderBottom = '1px solid #eee';
+        cartItem.innerHTML = `
+          <div style="font-weight: bold;">${product.title}</div>
+          <div>${settings.currency}${product.price.toLocaleString()} x ${item.quantity} = ${settings.currency}${itemTotal.toLocaleString()}</div>
+          <div style="display: flex; gap: 5px; margin-top: 5px;">
+            <input type="number" value="${item.quantity}" min="1" 
+                   onchange="updateQuantity(${index}, parseInt(this.value))" style="width: 50px; text-align: center;">
+            <button class="btn danger" onclick="removeFromCart(${index})" style="padding: 2px 5px;">
+              ${getTranslatedMessage('Remove')}
+            </button>
+          </div>
+        `;
+        cartItems.appendChild(cartItem);
+      });
+      
+      document.getElementById('cartTotal').textContent = 
+        `${getTranslatedMessage('Total')}: ${settings.currency}${total.toLocaleString()}`;
+      
+      document.getElementById('orderDetails').value = cart.map(item => {
+        const product = products[item.productIndex];
+        return `${product.title} x ${item.quantity} = ${settings.currency}${(product.price * item.quantity).toLocaleString()}`;
+      }).join('\n');
+      
+      document.getElementById('orderTotal').value = `${settings.currency}${total.toLocaleString()}`;
+      
+      document.getElementById('orderSummary').innerHTML = cart.map(item => {
+        const product = products[item.productIndex];
+        return `<div>${product.title} x ${item.quantity} = ${settings.currency}${(product.price * item.quantity).toLocaleString()}</div>`;
+      }).join('') + 
+      `<div style="font-weight: bold; margin-top: 10px;">
+        ${getTranslatedMessage('Total')}: ${settings.currency}${total.toLocaleString()}
+      </div>`;
+    }
+
+    // Order Management
+    document.getElementById('orderFormDetails').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById('orderName').value;
+      const email = document.getElementById('orderEmail').value;
+      const phone = document.getElementById('orderPhone').value;
+      const address = document.getElementById('orderAddress').value;
+      const orderDetails = document.getElementById('orderDetails').value;
+      const orderTotal = document.getElementById('orderTotal').value;
+      
+      if (!name || !phone || !address) {
+        alert(getTranslatedMessage('Please fill all required fields'));
+        return;
+      }
+      
+      addresses.push({ name, email, phone, address, date: new Date().toLocaleString() });
+      localStorage.setItem('addresses', JSON.stringify(addresses));
+      
+      emailjs.send('service_hwvi11g', 'template_kp1zovr', {
+        to_email: 'ashraf97941@gmail.com',
+        from_name: name,
+        from_email: email,
+        phone,
+        address,
+        order_details: orderDetails,
+        order_total: orderTotal,
+        message: `New order from ${name} at ${new Date().toLocaleString()}`
+      }).then(() => {
+        alert(getTranslatedMessage('Order placed successfully! We will contact you soon.'));
+        if (cart.length > 0) {
+          cart = [];
+          saveCart();
+          renderCart();
+        }
+        hideOrderForm();
+      }, (err) => {
+        console.error('Email failed:', err);
+        alert(getTranslatedMessage('Order placed but email failed'));
+      });
+    });
+
+    // Seller Account Creation
+    function createSellerAccount() {
+      const name = document.getElementById('sellerName').value;
+      const email = document.getElementById('sellerEmail').value;
+      const phone = document.getElementById('sellerPhone').value;
+      const address = document.getElementById('sellerAddress').value;
+      const bank = document.getElementById('sellerBank').value;
+      const id = document.getElementById('sellerID').value;
+      
+      if (!name || !email || !phone || !address || !bank || !id) {
+        alert(getTranslatedMessage('Please fill all required fields'));
+        return;
+      }
+      
+      const newSeller = { name, email, phone, address, bank, id, status: 'pending', date: new Date().toLocaleString() };
+      pendingSellers.push(newSeller);
+      localStorage.setItem('pendingSellers', JSON.stringify(pendingSellers));
+      
+      emailjs.send('service_hwvi11g', 'template_kp1zovr', {
+        to_email: 'ashraf97941@gmail.com',
+        from_name: name,
+        from_email: email,
+        phone,
+        address,
+        bank_details: bank,
+        id_number: id,
+        message: `New seller account request from ${name} at ${new Date().toLocaleString()}`
+      }).then(() => {
+        alert(getTranslatedMessage('Seller account request submitted successfully! Wait for admin approval.'));
+        document.getElementById('sellerName').value = '';
+        document.getElementById('sellerEmail').value = '';
+        document.getElementById('sellerPhone').value = '';
+        document.getElementById('sellerAddress').value = '';
+        document.getElementById('sellerBank').value = '';
+        document.getElementById('sellerID').value = '';
+        document.getElementById('sellerStep2').classList.remove('active');
+        document.getElementById('sellerStep1').classList.add('active');
+        renderPendingSellers();
+      }, (err) => {
+        console.error('Email failed:', err);
+        alert(getTranslatedMessage('Request submitted but email failed'));
+      });
+    }
+
+    // Password Protection
+    function showPasswordPrompt(action) {
+      currentAction = action;
+      document.getElementById('passwordPrompt').style.display = 'flex';
+      document.getElementById('adminPasswordInput').value = '';
+      document.getElementById('passwordError').style.display = 'none';
+      document.getElementById('adminPasswordInput').focus();
+    }
+
+    function verifyPassword() {
+      const enteredPassword = document.getElementById('adminPasswordInput').value;
+      if (enteredPassword === ADMIN_PASSWORD) {
+        isAdmin = true;
+        localStorage.setItem('isAdmin', 'true');
+        hidePasswordPrompt();
+        if (currentAction === 'accessSettings') {
+          document.getElementById('settingsSectionAdmin').style.display = 'block';
+          document.getElementById('pageHome').style.display = 'none';
+        } else if (currentAction === 'addProduct') {
+          addProduct();
+        }
+      } else {
+        document.getElementById('passwordError').style.display = 'block';
+        document.getElementById('adminPasswordInput').focus();
+      }
+    }
+
+    // Helper Functions
+    function toggleCart() {
+      renderCart();
+      document.getElementById('cartPanel').style.display = 
+        document.getElementById('cartPanel').style.display === 'block' ? 'none' : 'block';
+    }
+
+    function hideOrderForm() {
+      document.getElementById('orderForm').style.display = 'none';
+      document.getElementById('orderFormDetails').reset();
+    }
+
+    function hidePasswordPrompt() {
+      document.getElementById('passwordPrompt').style.display = 'none';
+      currentAction = '';
+    }
+
+    function updateStoreName() {
+      document.getElementById('storeName').textContent = settings.storeName;
+      document.title = `${settings.storeName} — ${getTranslatedMessage('Ecommerce')}`;
+    }
+
+    function saveCart() {
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    function saveStoreSettings() {
+      settings.storeName = document.getElementById('setStoreName').value;
+      settings.currency = document.getElementById('setCurrency').value;
+      settings.notice = document.getElementById('setNotice').value;
+      localStorage.setItem('settings', JSON.stringify(settings));
+      updateStoreName();
+      renderProducts();
+      alert(getTranslatedMessage('Settings saved successfully!'));
+    }
+
+    function resetStoreSettings() {
+      document.getElementById('setStoreName').value = 'Sharif.com';
+      document.getElementById('setCurrency').value = '₹';
+      document.getElementById('setNotice').value = '';
+      saveStoreSettings();
+    }
+
+    function saveAddress() {
+      const name = document.getElementById('custName').value;
+      const email = document.getElementById('custEmail').value;
+      const phone = document.getElementById('custPhone').value;
+      const address = document.getElementById('custAddress').value;
+      if (!name || !phone || !address) {
+        alert(getTranslatedMessage('Please fill all required fields'));
+        return;
+      }
+      addresses.push({ name, email, phone, address, date: new Date().toLocaleString() });
+      localStorage.setItem('addresses', JSON.stringify(addresses));
+      alert(getTranslatedMessage('Address saved successfully!'));
+    }
+
+    function resetAddress() {
+      document.getElementById('custName').value = '';
+      document.getElementById('custEmail').value = '';
+      document.getElementById('custPhone').value = '';
+      document.getElementById('custAddress').value = '';
+    }
+
+    function clearCart() {
+      cart = [];
+      saveCart();
+      renderCart();
+    }
+
+    function updateQuantity(index, newQuantity) {
+      if (newQuantity >= 1) {
+        cart[index].quantity = newQuantity;
+        saveCart();
+        renderCart();
+      }
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      saveCart();
+      renderCart();
+    }
+
+    function showOrderForm(productIndex = null) {
+      if (productIndex !== null) {
+        cart = [{ productIndex, quantity: 1 }];
+        renderCart();
+      }
+      document.getElementById('orderForm').style.display = 'flex';
+    }
+
+    function renderPendingSellers() {
+      const pendingSellersDiv = document.getElementById('pendingSellers');
+      pendingSellersDiv.innerHTML = '';
+      
+      pendingSellers.forEach((seller, index) => {
+        if (seller.status === 'pending') {
+          const sellerCard = document.createElement('div');
+          sellerCard.className = 'card';
+          sellerCard.innerHTML = `
+            <div class="title">${seller.name}</div>
+            <div>Email: ${seller.email}</div>
+            <div>Phone: ${seller.phone}</div>
+            <div>Address: ${seller.address}</div>
+            <div>Bank: ${seller.bank}</div>
+            <div>ID: ${seller.id}</div>
+            <div style="margin-top: 10px;">
+              <button class="btn" onclick="approveSeller(${index})">${getTranslatedMessage('Approve')}</button>
+              <button class="btn danger" onclick="rejectSeller(${index})">${getTranslatedMessage('Reject')}</button>
+            </div>
+          `;
+          pendingSellersDiv.appendChild(sellerCard);
+        }
+      });
+    }
+
+    function approveSeller(index) {
+      const seller = pendingSellers[index];
+      seller.status = 'approved';
+      approvedSellers.push(seller);
+      pendingSellers.splice(index, 1);
+      
+      localStorage.setItem('pendingSellers', JSON.stringify(pendingSellers));
+      localStorage.setItem('approvedSellers', JSON.stringify(approvedSellers));
+      
+      emailjs.send('service_hwvi11g', 'template_kp1zovr', {
+        to_email: seller.email,
+        from_name: settings.storeName,
+        message: `Your seller account has been approved! You can now start selling on ${settings.storeName}`
+      }).then(() => {
+        alert(getTranslatedMessage('Seller account approved and email sent!'));
+      }, (err) => {
+        console.error('Approval email failed:', err);
+      });
+      
+      renderPendingSellers();
+    }
+
+    function rejectSeller(index) {
+      const seller = pendingSellers[index];
+      pendingSellers.splice(index, 1);
+      localStorage.setItem('pendingSellers', JSON.stringify(pendingSellers));
+      
+      emailjs.send('service_hwvi11g', 'template_kp1zovr', {
+        to_email: seller.email,
+        from_name: settings.storeName,
+        message: `Your seller account request has been rejected. Please contact support for more information.`
+      }).then(() => {
+        alert(getTranslatedMessage('Seller account rejected!'));
+      }, (err) => {
+        console.error('Rejection email failed:', err);
+      });
+      
+      renderPendingSellers();
+    }
+  </script>
+</head>
+<body>
+  <header>
+    <div class="logo" id="storeName">Sharif.com</div>
+    <div class="nav">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <button class="btn ghost" onclick="toggleCart()" id="cartBtn" data-en="View Cart" data-ur="کارٹ دیکھیں" data-mm="စျေးခြင်းတောင်း ကြည့်ရန်">View Cart</button>
+      <div class="language-selector">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="ur">اردو</button>
+        <button class="lang-btn" data-lang="mm">မြန်မာ</button>
+      </div>
+    </div>
+    <div class="sidebar" id="sidebar">
+      <button onclick="showSettingsSection('pageHome')" data-en="Home" data-ur="ہوم" data-mm="ပင်မစာမျက်နှာ">Home</button>
+      <button onclick="showSettingsSection('settingsSectionAdmin')" data-en="Admin Settings" data-ur="ایڈمن سیٹنگز" data-mm="စီမံခန့်ခွဲသူဆက်တင်များ">Admin Settings</button>
+      <button onclick="showSettingsSection('settingsSectionSeller')" data-en="Create Seller Account" data-ur="سیلر اکاؤنٹ بنائیں" data-mm="ရောင်းချသူအကောင့်ဖန်တီးပါ">Create Seller Account</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- HOME PAGE -->
+    <section id="pageHome" class="page active">
+      <h2 id="productsTitle" data-en="Our Products" data-ur="ہماری پروڈکٹس" data-mm="ကျွန်ုပ်တို့၏ထုတ်ကုန်များ">Our Products</h2>
+      <div class="grid" id="productsGrid"></div>
+    </section>
+
+    <!-- ADMIN SETTINGS SECTION -->
+    <section id="settingsSectionAdmin" class="page settings-section" style="display: none;">
+      <h2 data-en="Store Settings" data-ur="اسٹور سیٹنگز" data-mm="စတိုးဆက်တင်များ">Store Settings</h2>
+      <div class="setgrid">
+        <input type="text" id="setStoreName" value="Sharif.com" data-en="Store Name" data-ur="اسٹور کا نام" data-mm="စတိုးအမည်">
+        <input type="text" id="setCurrency" value="₹" data-en="Currency" data-ur="کرنسی" data-mm="ငွေကြေးယူနစ်">
+        <textarea id="setNotice" data-en="Store Notice" data-ur="اسٹور نوٹس" data-mm="စတိုးသတိပေးချက်"></textarea>
+      </div>
+      <button class="btn" onclick="saveStoreSettings()" data-en="Save Settings" data-ur="سیٹنگز محفوظ کریں" data-mm="ဆက်တင်များသိမ်းဆည်းပါ">Save Settings</button>
+      <button class="btn danger" onclick="resetStoreSettings()" data-en="Reset" data-ur="ری سیٹ" data-mm="ပြန်လည်သတ်မှတ်ပါ">Reset</button>
+
+      <h2 data-en="Product Management" data-ur="پروڈکٹ مینجمنٹ" data-mm="ထုတ်ကုန်စီမံခန့်ခွဲမှု">Product Management</h2>
+      <div class="setgrid">
+        <input type="text" id="adminTitle" data-en="Product Title" data-ur="پروڈکٹ ٹائٹل" data-mm="ထုတ်ကုန်ခေါင်းစဉ်">
+        <input type="text" id="adminBrand" data-en="Brand" data-ur="برانڈ" data-mm="အမှတ်တံဆိပ်">
+        <textarea id="adminDescription" data-en="Description" data-ur="تفصیل" data-mm="ဖော်ပြချက်"></textarea>
+        <input type="number" id="adminPrice" data-en="Price" data-ur="قیمت" data-mm="စျေးနှုန်း">
+        <input type="file" id="imageInput" accept="image/*">
+        <img id="imagePreview" src="" alt="Preview" style="max-width: 200px; display: none; margin-top: 10px;">
+      </div>
+      <button class="btn" id="adminAddProductBtn" onclick="showPasswordPrompt('addProduct')" data-en="Add Product" data-ur="پروڈکٹ شامل کریں" data-mm="ထုတ်ကုန်ထည့်ပါ">Add Product</button>
+
+      <h2 data-en="Current Products" data-ur="موجودہ پروڈکٹس" data-mm="လက်ရှိထုတ်ကုန်များ">Current Products</h2>
+      <div class="grid" id="adminProductList"></div>
+
+      <h2 data-en="Address Book" data-ur="ایڈریس بک" data-mm="လိပ်စာစာအုပ်">Address Book</h2>
+      <div class="setgrid">
+        <input type="text" id="custName" data-en="Name" data-ur="نام" data-mm="နာမည်">
+        <input type="email" id="custEmail" data-en="Email" data-ur="ای میل" data-mm="အီးမေးလ်">
+        <input type="tel" id="custPhone" data-en="Phone" data-ur="فون" data-mm="ဖုန်း">
+        <textarea id="custAddress" data-en="Full Address" data-ur="مکمل ایڈریس" data-mm="ပြည့်စုံသောလိပ်စာ"></textarea>
+      </div>
+      <button class="btn" onclick="saveAddress()" data-en="Save Address" data-ur="ایڈریس محفوظ کریں" data-mm="လိပ်စာသိမ်းဆည်းပါ">Save Address</button>
+      <button class="btn danger" onclick="resetAddress()" data-en="Reset" data-ur="ری سیٹ" data-mm="ပြန်လည်သတ်မှတ်ပါ">Reset</button>
+
+      <h2 data-en="Pending Seller Accounts" data-ur="زیر التواء سیلر اکاؤنٹس" data-mm="ဆိုင်းငံ့ထားသော ရောင်းချသူအကောင့်များ">Pending Seller Accounts</h2>
+      <div class="grid" id="pendingSellers"></div>
+    </section>
+
+    <!-- SELLER ACCOUNT CREATION SECTION -->
+    <section id="settingsSectionSeller" class="page settings-section" style="display: none;">
+      <h2 data-en="Create Seller Account" data-ur="سیلر اکاؤنٹ بنائیں" data-mm="ရောင်းချသူအကောင့်ဖန်တီးပါ">Create Seller Account</h2>
+      <div class="seller-stage">
+        <h3 data-en="Step 1: Basic Information" data-ur="مرحلہ 1: بنیادی معلومات" data-mm="အဆင့် ၁: အခြေခံအချက်အလက်များ">Step 1: Basic Information</h3>
+        <div class="setgrid step active" id="sellerStep1">
+          <input type="text" id="sellerName" data-en="Full Name" data-ur="مکمل نام" data-mm="အမည်အပြည့်အစုံ">
+          <input type="email" id="sellerEmail" data-en="Email" data-ur="ای میل" data-mm="အီးမေးလ်">
+          <input type="tel" id="sellerPhone" data-en="Phone" data-ur="فون" data-mm="ဖုန်း">
+          <div class="step-nav">
+            <button class="btn" onclick="nextSellerStep(1, 2)" data-en="Next Step" data-ur="اگلا مرحلہ" data-mm="နောက်တစ်ဆင့်">Next Step</button>
+          </div>
+        </div>
+      </div>
+      <div class="seller-stage">
+        <h3 data-en="Step 2: Additional Information" data-ur="مرحلہ 2: اضافی معلومات" data-mm="အဆင့် ၂: ထပ်ဆောင်းအချက်အလက်များ">Step 2: Additional Information</h3>
+        <div class="setgrid step" id="sellerStep2">
+          <textarea id="sellerAddress" data-en="Full Address" data-ur="مکمل ایڈریس" data-mm="ပြည့်စုံသောလိပ်စာ"></textarea>
+          <input type="text" id="sellerBank" data-en="Bank Account Details" data-ur="بینک اکاؤنٹ کی تفصیلات" data-mm="ဘဏ်အကောင့်အသေးစိတ်">
+          <input type="text" id="sellerID" data-en="National ID Number" data-ur="قومی شناختی نمبر" data-mm="အမျိုးသားမှတ်ပုံတင်နံပါတ်">
+          <div class="step-nav">
+            <button class="btn ghost" onclick="prevSellerStep(2, 1)" data-en="Previous Step" data-ur="پچھلا مرحلہ" data-mm="ယခင်အဆင့်">Previous Step</button>
+            <button class="btn success" id="createSellerBtn" onclick="createSellerAccount()" data-en="Create Account" data-ur="اکاؤنٹ بنائیں" data-mm="အကောင့်ဖန်တီးပါ">Create Account</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Cart Panel -->
+  <div id="cartPanel">
+    <h3 id="cartTitle" data-en="Your Cart" data-ur="آپ کی کارٹ" data-mm="သင့်စျေးခြင်းတောင်း">Your Cart</h3>
+    <div id="cartItems"></div>
+    <div id="cartTotal" style="font-weight: bold; margin: 15px 0;"></div>
+    <button class="btn danger" onclick="clearCart()" id="clearCartBtn" data-en="Clear Cart" data-ur="کارٹ صاف کریں" data-mm="စျေးခြင်းတောင်းရှင်းလင်းပါ">Clear Cart</button>
+    <button class="btn success" onclick="showOrderForm()" id="orderNowBtn" data-en="Order Now" data-ur="ابھی آرڈر کریں" data-mm="ယခုမှာယူပါ">Order Now</button>
+  </div>
+
+  <!-- Order Form -->
+  <div id="orderForm">
+    <div id="orderFormContent">
+      <button class="close-btn" onclick="hideOrderForm()">×</button>
+      <h3 id="orderTitle" data-en="Order Details" data-ur="آرڈر کی تفصیلات" data-mm="အော်ဒါအသေးစိတ်">Order Details</h3>
+      <form id="orderFormDetails">
+        <div class="form-group">
+          <label for="orderName" id="nameLabel" data-en="Name" data-ur="نام" data-mm="နာမည်">Name</label>
+          <input type="text" id="orderName" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="orderEmail" id="emailLabel" data-en="Email" data-ur="ای میل" data-mm="အီးမေးလ်">Email</label>
+          <input type="email" id="orderEmail" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="orderPhone" id="phoneLabel" data-en="Phone" data-ur="فون" data-mm="ဖုန်း">Phone</label>
+          <input type="tel" id="orderPhone" name="phone" required>
+        </div>
+        <div class="form-group">
+          <label for="orderAddress" id="addressLabel" data-en="Address" data-ur="ایڈریس" data-mm="လိပ်စာ">Address</label>
+          <textarea id="orderAddress" name="address" required></textarea>
+        </div>
+        <div class="form-group">
+          <label id="orderSummaryLabel" data-en="Order Summary" data-ur="آرڈر کا خلاصہ" data-mm="အော်ဒါအကျဉ်းချုပ်">Order Summary</label>
+          <div id="orderSummary" style="padding: 10px; background: #f5f5f5; border-radius: 5px;"></div>
+        </div>
+        <input type="hidden" name="order_details" id="orderDetails">
+        <input type="hidden" name="order_total" id="orderTotal">
+        <button type="submit" class="btn success" style="width: 100%; margin-top: 15px;" id="submitOrderBtn" data-en="Place Order" data-ur="آرڈر دیں" data-mm="အော်ဒါတင်ပါ">Place Order</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Password Prompt -->
+  <div id="passwordPrompt">
+    <div id="passwordPromptContent">
+      <h3 id="passwordPromptTitle" data-en="Admin Password Required" data-ur="ایڈمن پاس ورڈ درکار ہے" data-mm="စီမံခန့်ခွဲသူစကားဝှက်လိုအပ်သည်">Admin Password Required</h3>
+      <input type="password" id="adminPasswordInput" data-en="Enter password" data-ur="پاس ورڈ درج کریں" data-mm="စကားဝှက်ထည့်ပါ" style="width: 100%; padding: 10px; margin: 15px 0;">
+      <button class="btn" onclick="verifyPassword()" id="verifyPasswordBtn" data-en="Verify" data-ur="تصدیق کریں" data-mm="အတည်ပြုပါ">Verify</button>
+      <button class="btn danger" onclick="hidePasswordPrompt()" id="cancelPasswordBtn" data-en="Cancel" data-ur="منسوخ کریں" data-mm="ပယ်ဖျက်ပါ">Cancel</button>
+      <p id="passwordError" style="color: var(--danger); margin-top: 10px; display: none;" data-en="Wrong password!" data-ur="غلط پاس ورڈ!" data-mm="စကားဝှက်မမှန်ကန်ပါ!">Wrong password!</p>
+    </div>
+  </div>
+</body>
+</html>
