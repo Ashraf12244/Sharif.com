@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sharif.com — E-commerce</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="logo" id="storeName" data-en="Sharif.com" data-ur="شریف ڈاٹ کام" data-mm="ရှရစ်ဒတ်ကွမ်">Sharif.com</div>
+        <div class="nav">
+            <button class="menu-btn" onclick="toggleMenu()">☰</button>
+            <button class="btn ghost" onclick="toggleCart()" id="cartBtn" data-en="View Cart" data-ur="کارٹ دیکھیں" data-mm="စျေးခြင်းတောင်းကြည့်ရန်">View Cart</button>
+            <div class="language-selector">
+                <button class="lang-btn active" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="ur">اردو</button>
+                <button class="lang-btn" data-lang="mm">မြန်မာ</button>
+            </div>
+        </div>
+        <div class="three-line-menu" id="threeLineMenu">
+            <button onclick="showPage('home')" id="menuHome" data-en="Home" data-ur="ہوم" data-mm="ပင်မစာမျက်နှာ">Home</button>
+            <button onclick="showPage('settings')" id="menuSettings" data-en="Settings" data-ur="ترتیبات" data-mm="ဆက်တင်များ">Settings</button>
+        </div>
+    </header>
+
+    <main class="wrap">
+        <section id="pageHome" class="page active">
+            <h2 id="productsTitle" data-en="Our Products" data-ur="ہماری مصنوعات" data-mm="ကျွန်ုပ်တို့၏ထုတ်ကုန်များ">Our Products</h2>
+            <div class="setgrid">
+                <input type="text" id="searchInput" placeholder="Search products..." data-en="Search products..." data-ur="مصنوعات تلاش کریں..." data-mm="ထုတ်ကုန်များရှာဖွေပါ...">
+                <select id="filterSelect">
+                    <option value="all" data-en="All" data-ur="تمام" data-mm="အားလုံး">All</option>
+                    <option value="priceLow" data-en="Price: Low to High" data-ur="قیمت: کم سے زیادہ" data-mm="စျေးနှုန်း: နိမ့်မှမြင့်သို့">Price: Low to High</option>
+                    <option value="priceHigh" data-en="Price: High to Low" data-ur="قیمت: زیادہ سے کم" data-mm="စျေးနှုန်း: မြင့်မှနိမ့်သို့">Price: High to Low</option>
+                </select>
+            </div>
+            <div class="grid" id="productsGrid"></div>
+            <div class="wish-list" id="wishList"></div>
+        </section>
+
+        <section id="pageSettings" class="page">
+            <h2 data-en="Store Settings" data-ur="اسٹور ترتیبات" data-mm="ဆိုင်ဆက်တင်များ">Store Settings</h2>
+            <div class="setgrid">
+                <input type="text" placeholder="Store Name" id="setStoreName" data-en="Store Name" data-ur="اسٹور کا نام" data-mm="ဆိုင်နာမည်">
+                <input type="text" placeholder="Currency" id="setCurrency" data-en="Currency" data-ur="کرنسی" data-mm="ငွေကြေးယူနစ်">
+                <textarea placeholder="Store Notice" id="setNotice" data-en="Store Notice" data-ur="اسٹور نوٹس" data-mm="ဆိုင်အသိပေးချက်"></textarea>
+            </div>
+            <button class="btn" onclick="saveStoreSettings()" data-en="Save Settings" data-ur="ترتیبات محفوظ کریں" data-mm="ဆက်တင်များသိမ်းဆည်းပါ">Save Settings</button>
+            <button class="btn danger" onclick="resetStoreSettings()" data-en="Reset" data-ur="ری سیٹ" data-mm="ပြန်လည်သတ်မှတ်ပါ">Reset</button>
+
+            <h2 data-en="Product Management" data-ur="پروڈکٹ مینجمنٹ" data-mm="ထုတ်ကုန်စီမံခန့်ခွဲမှု">Product Management</h2>
+            <div class="setgrid">
+                <input type="text" placeholder="Product Title" id="adminTitle" data-en="Product Title" data-ur="پروڈکٹ کا عنوان" data-mm="ထုတ်ကုန်ခေါင်းစဉ်">
+                <input type="text" placeholder="Brand" id="adminBrand" data-en="Brand" data-ur="برانڈ" data-mm="အမှတ်တံဆိပ်">
+                <textarea placeholder="Description" id="adminDescription" data-en="Description" data-ur="تفصیل" data-mm="ဖော်ပြချက်"></textarea>
+                <input type="number" placeholder="Price" id="adminPrice" data-en="Price" data-ur="قیمت" data-mm="စျေးနှုန်း">
+                <input type="file" id="imageInput" accept="image/*" capture="environment">
+                <img id="imagePreview" src="" alt="Preview" style="max-width: 200px; display: none; margin-top: 10px;">
+            </div>
+            <button class="btn" id="adminAddProductBtn" onclick="showPasswordPrompt('addProduct')" data-en="Add Product" data-ur="پروڈکٹ شامل کریں" data-mm="ထုတ်ကုန်ထည့်ပါ">Add Product</button>
+
+            <h2 data-en="Current Products" data-ur="موجودہ مصنوعات" data-mm="လက်ရှိထုတ်ကုန်များ">Current Products</h2>
+            <div class="grid" id="adminProductList"></div>
+            
+            <h2 data-en="Address Book" data-ur="ایڈریس بک" data-mm="လိပ်စာစာအုပ်">Address Book</h2>
+            <div class="setgrid">
+                <input type="text" placeholder="Name" id="custName" data-en="Name" data-ur="نام" data-mm="နာမည်">
+                <input type="email" placeholder="Email" id="custEmail" data-en="Email" data-ur="ای میل" data-mm="အီးမေးလ်">
+                <input type="tel" placeholder="Phone" id="custPhone" data-en="Phone" data-ur="فون" data-mm="ဖုန်း">
+                <textarea placeholder="Full Address" id="custAddress" data-en="Full Address" data-ur="مکمل پتہ" data-mm="လိပ်စာအပြည့်အစုံ"></textarea>
+            </div>
+            <button class="btn" onclick="saveAddress()" data-en="Save Address" data-ur="پتہ محفوظ کریں" data-mm="လိပ်စာသိမ်းဆည်းပါ">Save Address</button>
+            <button class="btn danger" onclick="resetAddress()" data-en="Reset" data-ur="ری سیٹ" data-mm="ပြန်လည်သတ်မှတ်ပါ">Reset</button>
+
+            <h2 data-en="Create Seller Account" data-ur="سیلر اکاؤنٹ بنائیں" data-mm="ရောင်းချသူအကောင့်ဖန်တီးပါ">Create Seller Account</h2>
+            <div class="seller-stage">
+                <h3 data-en="Step 1: Basic Information" data-ur="مرحلہ 1: بنیادی معلومات" data-mm="အဆင့် 1: အခြေခံအချက်အလက်များ">Step 1: Basic Information</h3>
+                <div class="setgrid step active" id="sellerStep1">
+                    <input type="text" placeholder="Full Name" id="sellerName" data-en="Full Name" data-ur="مکمل نام" data-mm="နာမည်အပြည့်အစုံ">
+                    <input type="email" placeholder="Email" id="sellerEmail" data-en="Email" data-ur="ای میل" data-mm="အီးမေးလ်">
+                    <input type="tel" placeholder="Phone" id="sellerPhone" data-en="Phone" data-ur="فون" data-mm="ဖုန်း">
+                    <div class="step-nav">
+                        <button class="btn" onclick="nextSellerStep(1, 2)" data-en="Next Step" data-ur="اگلا مرحلہ" data-mm="နောက်အဆင့်">Next Step</button>
+                    </div>
+                </div>
+            </div>
+            <div class="seller-stage">
+                <h3 data-en="Step 2: Additional Information" data-ur="مرحلہ 2: اضافی معلومات" data-mm="အဆင့် 2: ထပ်ဆောင်းအချက်အလက်များ">Step 2: Additional Information</h3>
+                <div class="setgrid step" id="sellerStep2">
+                    <textarea placeholder="Full Address" id="sellerAddress" data-en="Full Address" data-ur="مکمل پتہ" data-mm="လိပ်စာအပြည့်အစုံ"></textarea>
+                    <input type="text" placeholder="Bank Account Details" id="sellerBank" data-en="Bank Account Details" data-ur="بینک اکاؤنٹ کی تفصیلات" data-mm="ဘဏ်အကောင့်အသေးစိတ်">
+                    <input type="text" placeholder="National ID Number" id="sellerID" data-en="National ID Number" data-ur="قومی شناختی نمبر" data-mm="အမျိုးသားမှတ်ပုံတင်နံပါတ်">
+                    <div class="step-nav">
+                        <button class="btn ghost" onclick="prevSellerStep(2, 1)" data-en="Previous Step" data-ur="پچھلا مرحلہ" data-mm="ယခင်အဆင့်">Previous Step</button>
+                        <button class="btn success" id="createSellerBtn" onclick="createSellerAccount()" data-en="Create Account" data-ur="اکاؤنٹ بنائیں" data-mm="အကောင့်ဖန်တီးပါ">Create Account</button>
+                    </div>
+                </div>
+            </div>
+
+            <h2 data-en="Pending Seller Accounts" data-ur="زیر التواء سیلر اکاؤنٹس" data-mm="ဆိုင်းငံ့ထားသော ရောင်းချသူအကောင့်များ">Pending Seller Accounts</h2>
+            <div class="grid" id="pendingSellers"></div>
+
+            <h2 data-en="Create Customer Account" data-ur="کسٹمر اکاؤنٹ بنائیں" data-mm="ဖောက်သည်အကောင့်ဖန်တီးပါ">Create Customer Account</h2>
+            <div class="setgrid">
+                <input type="text" placeholder="Name" id="customerName" data-en="Name" data-ur="نام" data-mm="နာမည်">
+                <input type="email" placeholder="Email" id="customerEmail" data-en="Email" data-ur="ای میل" data-mm="အီးမေးလ်">
+                <input type="tel" placeholder="Phone" id="customerPhone" data-en="Phone" data-ur="فون" data-mm="ဖုန်း">
+                <textarea placeholder="Full Address" id="customerAddress" data-en="Full Address" data-ur="مکمل پتہ" data-mm="လိပ်စာအပြည့်အစုံ"></textarea>
+                <input type="password" placeholder="Password" id="customerPassword" data-en="Password" data-ur="پاس ورڈ" data-mm="စကားဝှက်">
+            </div>
+            <button class="btn success" onclick="createCustomerAccount()" data-en="Create Account" data-ur="اکاؤنٹ بنائیں" data-mm="အကောင့်ဖန်တီးပါ">Create Account</button>
+        </section>
+    </main>
+
+    <div id="cartPanel">
+        <h3 id="cartTitle" data-en="Your Cart" data-ur="آپ کی کارٹ" data-mm="သင့်စျေးခြင်းတောင်း">Your Cart</h3>
+        <div id="cartItems"></div>
+        <div id="cartTotal" style="font-weight: bold; margin: 15px 0;"></div>
+        <button class="btn danger" onclick="clearCart()" id="clearCartBtn" data-en="Clear Cart" data-ur="کارٹ صاف کریں" data-mm="စျေးခြင်းတောင်းရှင်းလင်းပါ">Clear Cart</button>
+        <button class="btn success" onclick="showOrderForm()" id="orderNowBtn" data-en="Order Now" data-ur="ابھی آرڈر کریں" data-mm="ယခုမှာယူပါ">Order Now</button>
+    </div>
+
+    <div id="orderForm">
+        <div id="orderFormContent">
+            <button class="close-btn" onclick="hideOrderForm()">×</button>
+            <h3 id="orderTitle" data-en="Order Details" data-ur="آرڈر کی تفصیلات" data-mm="အော်ဒါအသေးစိတ်">Order Details</h3>
+            <form id="orderFormDetails">
+                <div class="form-group">
+                    <label for="orderName" id="nameLabel" data-en="Name" data-ur="نام" data-mm="နာမည်">Name</label>
+                    <input type="text" id="orderName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="orderEmail" id="emailLabel" data-en="Email" data-ur="ای میل" data-mm="အီးမေးလ်">Email</label>
+                    <input type="email" id="orderEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="orderPhone" id="phoneLabel" data-en="Phone" data-ur="فون" data-mm="ဖုန်း">Phone</label>
+                    <input type="tel" id="orderPhone" name="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="orderAddress" id="addressLabel" data-en="Address" data-ur="پتہ" data-mm="လိပ်စာ">Address</label>
+                    <textarea id="orderAddress" name="address" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label id="orderSummaryLabel" data-en="Order Summary" data-ur="آرڈر کا خلاصہ" data-mm="အော်ဒါအကျဉ်းချုပ်">Order Summary</label>
+                    <div id="orderSummary" style="padding: 10px; background: #f5f5f5; border-radius: 5px;"></div>
+                </div>
+                <input type="hidden" name="order_details" id="orderDetails">
+                <input type="hidden" name="order_total" id="orderTotal">
+                <button type="submit" class="btn success" style="width: 100%; margin-top: 15px;" id="submitOrderBtn" data-en="Place Order" data-ur="آرڈر دیں" data-mm="အော်ဒါတင်ပါ">Place Order</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="passwordPrompt">
+        <div id="passwordPromptContent">
+            <h3 id="passwordPromptTitle" data-en="Admin Password Required" data-ur="ایڈمن پاس ورڈ درکار ہے" data-mm="အက်ဒမင်စကားဝှက်လိုအပ်သည်">Admin Password Required</h3>
+            <input type="password" id="adminPasswordInput" placeholder="Enter password" data-en="Enter password" data-ur="پاس ورڈ درج کریں" data-mm="စကားဝှက်ထည့်ပါ">
+            <button class="btn" onclick="verifyPassword()" id="verifyPasswordBtn" data-en="Verify" data-ur="تصدیق کریں" data-mm="အတည်ပြုပါ">Verify</button>
+            <button class="btn danger" onclick="hidePasswordPrompt()" id="cancelPasswordBtn" data-en="Cancel" data-ur="منسوخ کریں" data-mm="ပယ်ဖျက်ပါ">Cancel</button>
+            <p id="passwordError" class="danger" data-en="Wrong password!" data-ur="غلط پاس ورڈ!" data-mm="စကားဝှက်မမှန်ကန်ပါ!">Wrong password!</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <script>
+        // Initialize EmailJS with your credentials
+        (function() {
+            emailjs.init("DapdU3gPmJ8ymUdD2");
+        })();
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
