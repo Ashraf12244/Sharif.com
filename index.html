@@ -20,7 +20,7 @@
             </div>
         </div>
         <div class="three-line-menu" id="threeLineMenu">
-            <button onclick="showPage('home')" id="Home" data-en="Home" data-ur="ہوم" data-mm="ပင်မစာမျက်နှာ">Home</button>
+            <button onclick="showPage('home')" id="menuHome" data-en="Home" data-ur="ہوم" data-mm="ပင်မစာမျက်နှာ">Home</button>
             <button onclick="showPage('settings')" id="menuSettings" data-en="Settings" data-ur="ترتیبات" data-mm="ဆက်တင်များ">Settings</button>
         </div>
     </header>
@@ -1598,7 +1598,10 @@
             padding: 10px;
             border-radius: 5px;
         }
-  
+  document.addEventListener('click', () => {
+    document.getElementById('settingsOptions').style.display = 
+        document.getElementById('pageHome').classList.contains('active') ? 'none' : 'block';
+});
  </style>
 <!--Start of Tawk.to Script-->
 <script type="text/javascript">
